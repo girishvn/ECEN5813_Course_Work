@@ -14,8 +14,7 @@
 #define MEMORY_H
 
 #include <stdint.h>  /* include standard data types */
-#include <stddef.h> /* include size_t type */
-#include <stdlib.h> /* includes malloc and free */
+#include <stddef.h> /* include size_t and NULL type */
 
 /**
  * @brief Moves a piece of memory from one place to another

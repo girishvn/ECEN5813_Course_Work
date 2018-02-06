@@ -11,11 +11,13 @@
  */
 
 #include "memory.h"
+#include <stdlib.h> /* includes malloc and free */
+
 
 uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
 {
     /* variable declarations */
-    uint8_t i; /* iterator variable */
+    size_t i; /* iterator variable */
 
 
     /* error and exception checking */
@@ -44,7 +46,7 @@ uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
 uint8_t * my_memcpy(uint8_t * src, uint8_t * dst, size_t length)
 {
     /* variable declarations */
-    uint8_t i; /* iterator variable */
+    size_t i; /* iterator variable */
 
     /* error and exception checking */
     if(src == NULL || dst == NULL) /* checking for bad pointer access */
@@ -67,7 +69,7 @@ uint8_t * my_memcpy(uint8_t * src, uint8_t * dst, size_t length)
 uint8_t * my_memset(uint8_t * src, size_t length, uint8_t value)
 {
     /* variable declarations */
-    uint8_t i; /* iterator variable */
+    size_t i; /* iterator variable */
 
     /* error and exception checking */
     if(src == NULL) /* checking for bad pointer access */
@@ -86,7 +88,7 @@ uint8_t * my_memset(uint8_t * src, size_t length, uint8_t value)
 uint8_t * my_memzero(uint8_t * src, size_t length)
 {
     /* variable declarations */
-    uint8_t i; /* iterator variable */
+    size_t i; /* iterator variable */
 
     /* error and exception checking */
     if(src == NULL) /* checking for bad pointer access */
@@ -105,7 +107,7 @@ uint8_t * my_memzero(uint8_t * src, size_t length)
 uint8_t * my_reverse(uint8_t * src, size_t length)
 {
     /* variable declarations */
-    uint8_t i; /* iterator variable */
+    size_t i; /* iterator variable */
     uint8_t temp; /* temp variable */
 
     /* error and exception checking */
@@ -130,7 +132,7 @@ int32_t * reserve_words(size_t length)
     int32_t * newMem = NULL; /* pointer to assign memory to */
 
     /* mem reserve */
-    newMem = (int32_t *) malloc(sizeof(void *));
+    newMem = (int32_t *) malloc(length * sizeof(void *));
 
     return newMem; /* returns pointer, or automatically NULL if malloc fails */
 }
