@@ -10,8 +10,8 @@
  *
  */
 
-#ifndef MEMORY_H
-#define MEMORY_H
+#ifndef __MEMORY_H__
+#define __MEMORY_H__
 
 #include <stdint.h>  /* include standard data types */
 #include <stddef.h> /* include size_t and NULL type */
@@ -104,6 +104,6 @@ int32_t * reserve_words(size_t length);
  *
  * @return 0 if free was successful, 1 is free was not successful
  */
-uint8_t free_words(uint8_t * src);
+uint8_t free_words(uint32_t * src);
 
-#endif //MEMORY_H
+#endif //__MEMORY_H__

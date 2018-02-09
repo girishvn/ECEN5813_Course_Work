@@ -15,6 +15,8 @@
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #endif
 
+#include "platform.h"
+
 void print_cstd_types_sizes(){
 #ifdef VERBOSE
     size_t temp;
@@ -163,14 +165,14 @@ int32_t swap_data_endianness(uint8_t* data, size_t type_length){
     uint32_t i;
     for(i = 0; i < type_length/2; i++) { /*Loop through half the array b/c each end is grabbed per iteration*/
         temp = *(data + i); /*assigning beginning index value to temp*/
-        *(data + i) = end; /*swap beginning with ending*/
+        *(data + i) = *(data + (type_length - 1 - i)); /*swap beginning with ending*/
         *(data + (type_length - 1 - i)) = temp; /*swap ending with beginning*/
     }
     return SWAP_NO_ERROR;
 }
 uint32_t determine_endianness(){
     uint32_t var = 0xDEADBEEF; /* 32 bit variable stored in memory */
-    uint8_t* ptr = &var; /* 8-bit pointer pointing to the beginning of the variable */
+    uint8_t* ptr = (uint8_t *) (&var); /* 8-bit pointer pointing to the beginning of the variable */
 
     if(*ptr == 0xDE){
         return BIG_ENDIAN;

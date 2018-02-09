@@ -1,8 +1,7 @@
 #Additional Source makefile to procide list of source files for Make
 
 SOURCES = main.c \
-	conversion.h \
-	data.c \
+	conversion.c \
 	debug.c \
 	platform.c \
 	project1.c \

@@ -35,8 +35,8 @@ uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
     }
     else if(src < dst) /* second scenario src < dst in mem */
     {
-        for(i = length - 1; i >= 0; i--){
-            *(dst + i) = *(src + i); /* move byte from source to destination */
+        for(i = length; i > 0; i--){
+            *(dst + i - 1) = *(src + i - 1); /* move byte from source to destination */
         }
     }
 
@@ -137,7 +137,7 @@ int32_t * reserve_words(size_t length)
     return newMem; /* returns pointer, or automatically NULL if malloc fails */
 }
 
-uint8_t free_words(uint8_t * src)
+uint8_t free_words(uint32_t * src)
 {
     free(src);
     if(src == NULL)

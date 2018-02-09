@@ -12,12 +12,17 @@
  */
 #ifndef __PLATFORM_H__
 #define __PLATFORM_H__
-#include <stdint.h>
+
+#include <stdint.h> /* include standard int types */
+#include <stddef.h> /* include NULL and size_t */
 
 #define LITTLE_ENDIAN (0)
 #define BIG_ENDIAN (1)
 #define SWAP_NO_ERROR (0)
 #define SWAP_ERROR (-1)
+
+//#define PRINTF printf /* IS THIS RIGHT??? */
+#define PRINTF(...)
 
 /**
  * @brief Reports the size of all C-standard types

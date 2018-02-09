@@ -11,15 +11,16 @@
  *
  */
 
-#include<stdint.h>
+#include "debug.h"
+#include "platform.h"
 
 void print_array(uint8_t* start, uint32_t length){
 #ifdef VERBOSE
     uint32_t i;
-    uint8_t key;
+   // uint8_t key;
     for(i = 0; i < length; i++){
-        key = *start;
-        PRINTF("%x", key);
+        //key = *start;
+        PRINTF("%x", (*start));
         start++;
     }
 #endif

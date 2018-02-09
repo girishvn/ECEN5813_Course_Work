@@ -1,7 +1,12 @@
 #include "project1.h"
-
-void main() {
+#include <stdio.h>
+int main()
+{
 #ifdef PROJECT1
-    project1();
+	project1();
+
+	printf("what is going o\n");
 #endif
+
+	return 0;
 }

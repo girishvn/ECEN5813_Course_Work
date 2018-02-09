@@ -10,8 +10,9 @@
  * @version 1.0
  *
  */
-#ifndef __CONVERSIONS_H__
-#define __CONVERSIONS_H__
+#ifndef __CONVERSION_H__
+#define __CONVERSION_H__
+
 #include <stdint.h>
 
 /**
@@ -42,5 +43,5 @@
  */
         int32_t my_atoi(uint8_t *ptr, uint8_t digits, uint32_t base);
 
-#endif /* __CONVERSIONS_H__ */
+#endif /* __CONVERSION_H__ */
 

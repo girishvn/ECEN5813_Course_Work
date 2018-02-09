@@ -80,7 +80,7 @@ uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
         *(ptr + i - 1) = tmpChar; /* set character to char value */
     }
 
-    return length; /* return total number of characters stored in at ptr */
+    return (uint8_t)(length - sign - 1); /* return total number of digits stored in at ptr */
 }
 
 int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
