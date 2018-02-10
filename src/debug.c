@@ -20,7 +20,7 @@ void print_array(uint8_t* start, uint32_t length){
    // uint8_t key;
     for(i = 0; i < length; i++){
         //key = *start;
-        PRINTF("%x", (*start));
+        PRINTF("%x", *start);
         start++;
     }
 #endif

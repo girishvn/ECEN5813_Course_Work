@@ -49,14 +49,14 @@ OBJS = $(SOURCES:.c=.o)
 OBJS += $(SOURCES:.S=.o)
 
 .PHONY: build
-build: $(OBJS)
-	$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) -o project1.elf
+build: $(TARGET).elf
 
 .PHONY: compile-all
 compile-all: $(OBJS)
 
 $(TARGET).elf: $(OBJS)
 	$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) -o $@
+
 
 %.i : %.c
 	$(CC) $(CPPFLAGS) -E $< -o $@
@@ -72,5 +72,5 @@ $(TARGET).elf: $(OBJS)
 	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 
 .PHONY: clean
-clean: 
+clean:
 	rm -f *.o *.i *.elf *.asm *.map *.d
