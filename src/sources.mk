@@ -10,5 +10,5 @@ SOURCES = main.c \
 ifeq ($(PLATFORM),KL25Z)
 SOURCES += arch_arm32.c \
 	system_MKL25Z4.c \
-	starup_MKL25Z4.S
+	startup_MKL25Z4.S
 endif

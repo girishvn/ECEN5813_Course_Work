@@ -13,12 +13,13 @@ ifeq ($(PLATFORM),KL25Z)
 #Architecture Specific Flags
 CPU = cortex-m0plus
 ARCH = armv6-m
-FPABI = softfp
+FPABI = soft
 ARCHFLAGS = -mcpu=$(CPU) -mthumb -march=$(ARCH) -mfloat-abi=$(FPABI) -mfpu=fpv4-sp-d16 --specs=nosys.specs
 
-LINKERFILE = MKL25Z128xxx4_flash.ld 
+
+LINKERFILE = ../platform/MKL25Z128xxx4_flash.ld 
 COMPILER = arm-none-eabi-gcc
-INCLUDES = -I../include/CMSIS -I../include/kl25z	
+INCLUDES = -I../include/CMSIS -I../include/kl25z -I../platform	
 LDFLAGS = -T$(LINKERFILE)
 
 #For Beagle Bone Black
@@ -45,8 +46,8 @@ CPPFLAGS = -DPROJECT1 $(VERBOSEOUT) $(INCLUDES)
 LDFLAGS += -Wl,-Map=$(TARGET).map 
 
 #Generate object variable from implementation .c and .S files 
-OBJS = $(SOURCES:.c=.o)
-OBJS += $(SOURCES:.S=.o)
+OBJS := $(SOURCES:.c=.o)
+OBJS := $(OBJS:.S=.o)
 
 .PHONY: build
 build: $(TARGET).elf
@@ -65,7 +66,7 @@ $(TARGET).elf: $(OBJS)
 	$(CC) $(CFLAGS) -S $< -o $@
 
 %.o : %.c
-	$(CC) $(CFLAGS) $(CPPFLAGS)  -c $< -o $@
+	$(CC) $(CFLAGS) $(CPPFLAGS) -c $< -o $@
 	$(CC) $(CFLAGS) -M $< -o $*.d
 
 %.o : %.S
