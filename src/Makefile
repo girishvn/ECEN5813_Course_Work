@@ -16,7 +16,6 @@ ARCH = armv6-m
 FPABI = soft
 ARCHFLAGS = -mcpu=$(CPU) -mthumb -march=$(ARCH) -mfloat-abi=$(FPABI) -mfpu=fpv4-sp-d16 --specs=nosys.specs
 
-
 LINKERFILE = ../platform/MKL25Z128xxx4_flash.ld 
 COMPILER = arm-none-eabi-gcc
 INCLUDES = -I../include/CMSIS -I../include/kl25z -I../platform	
@@ -41,7 +40,7 @@ endif
 #Compile Defines
 INCLUDES +=-I../include/common
 CC = $(COMPILER)
-CFLAGS = $(GENFLAGS) $(ARCHFLAGS) $(INCLUDES)
+CFLAGS = $(INCLUDES) $(GENFLAGS) $(ARCHFLAGS)
 CPPFLAGS = -DPROJECT1 $(VERBOSEOUT) $(INCLUDES)
 LDFLAGS += -Wl,-Map=$(TARGET).map 
 
