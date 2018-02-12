@@ -17,11 +17,41 @@ To build and run on the host machine, clone this repo, move to the /src director
 and type the "$ make" command. 
 
 This will create all of the object (.o), dependency (.d), map (.map), and exacutable
-(.elf) for the project. To run type the "$ ./project1.elf" command. Additional rules for make are specified and commented in the usage comments in the Makefile.
+(.elf) for the project. To run type the "$ ./project1.elf" command. Additional rules for
+make are specified and commented in the usage comments below:
+
+
+Make Usage:
+
+ $ make 
+	Builds project for HOST (linux) platform
+	Generates all .o .d .map .elf files
+
+$ make build PLATFORM=<HOST,BBB,KL25Z> 
+	Builds project for HOST, BBB, or KL25Z platform
+	Generates all .o .d .map .elf files
+
+$ make compile-all PLATFORM=<HOST,BBB,KL25Z> 
+	Compiles project source code for HOST, BBB, or KL25Z platform
+	Generates all .o .d files
+
+$ make clean
+	Removes all generate files
+	Removes all .o .d .asm .i .elf .asm files
+
+$ make %.i
+	Generates preprocessed output of a c-implementation file
+	Generates .i files
+
+$ make %.asm
+	Generates assembly output of a c-implementation file
+	Generates .i files
+
+$ make %.o
+	Generates object output of a c-implementation file
+	Generates .o files
 
 All function descriptons exist in the header files. 
-
-
 Here is a little description of how this project went:
 
 ░░▄▀░░░░░░░░░░░░░░░▀▀▄▄░░░░░░
