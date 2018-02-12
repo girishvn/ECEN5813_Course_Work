@@ -14,6 +14,6 @@
 #define __PLATFORM_H__
 
 #include <stdio.h> /* for print */
-#define PRINTF printf /* IS THIS RIGHT??? */
+#define PRINTF printf /* for print */
 
 #endif /* __PLATFORM_H__ */
