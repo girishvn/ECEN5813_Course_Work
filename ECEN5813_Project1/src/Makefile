@@ -64,7 +64,8 @@ else ifeq ($(PLATFORM),BBB)
 
 VERBOSEOUT = -DVERBOSE
 COMPILER = arm-linux-gnueabi-gcc
-INCLUDES = -I../include/CMSIS
+INCLUDES = -I../include/CMSIS 
+LDFLAGS = -static
 
 #For host platform (linux computer), default case
 else
