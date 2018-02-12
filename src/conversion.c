@@ -1,6 +1,3 @@
-#include "conversion.h"
-#include <stddef.h> /* include NULL type */
-
 /**
  * @file conversion.c
  * @brief Implementation of the memory.h file
@@ -12,6 +9,9 @@
  * @version 1.0
  *
  */
+
+#include "conversion.h"
+#include <stddef.h> /* include NULL type */
 
 uint8_t my_itoa(int32_t data, uint8_t * ptr, uint32_t base)
 {

@@ -1,4 +1,14 @@
-#Additional Source makefile to procide list of source files for Make
+#
+# @file conversion.c
+# @brief Additional make file used by Makefile with src information
+#
+# This make file contains a list of the additional source files needed depending on the patform
+#
+# @author Girish Narayanswamy
+# @date February 3 2018
+# @version 1.0
+#
+#
 
 SOURCES = main.c \
 	conversion.c \

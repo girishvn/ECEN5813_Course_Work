@@ -1,4 +1,42 @@
-#Make file by Girish Narayanswamy and Karros Huang
+#
+# @file Makefile
+# @brief Makefile to build project1
+#
+# @author Girish Narayanswamy
+# @date February 3 2018
+# @version 1.0
+#
+# Usage:
+#
+# $ make 
+# Builds project for HOST (linux) platform
+# Generates all .o .d .map .elf files
+#
+# $ make build PLATFORM=<HOST,BBB,KL25Z> 
+# Builds project for HOST, BBB, or KL25Z platform
+# Generates all .o .d .map .elf files
+#
+# $ make compile-all PLATFORM=<HOST,BBB,KL25Z> 
+# Compiles project source code for HOST, BBB, or KL25Z platform
+# Generates all .o .d files
+#
+# $ make clean
+# Removes all generate files
+# Removes all .o .d .asm .i .elf .asm files
+#
+# $ make %.i
+# Generates preprocessed output of a c-implementation file
+# Generates .i files
+#
+# $ make %.asm
+# Generates assembly output of a c-implementation file
+# Generates .i files
+#
+# $ make %.o
+# Generates object output of a c-implementation file
+# Generates .o files
+#
+#
 
 #Additional makefile with a list of all source code files 
 include sources.mk
@@ -50,6 +88,7 @@ OBJS := $(OBJS:.S=.o)
 
 .PHONY: build
 build: $(TARGET).elf
+	size $(TARGET).elf $(OBJS)
 
 .PHONY: compile-all
 compile-all: $(OBJS)
