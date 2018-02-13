@@ -91,7 +91,6 @@ OBJS := $(OBJS:.S=.o)
 HEXbuild: $(TARGET).elf
 	objcopy -O ihex $(TARGET).elf $(TARGET).hex
 
-
 .PHONY: build
 build: $(TARGET).elf
 	size $(TARGET).elf $(OBJS)
@@ -118,4 +117,4 @@ $(TARGET).elf: $(OBJS)
 
 .PHONY: clean
 clean:
-	rm -f *.o *.i *.elf *.asm *.map *.d
+	rm -f *.o *.i *.elf *.asm *.map *.d *.hex
