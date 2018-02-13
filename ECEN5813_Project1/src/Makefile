@@ -71,7 +71,7 @@ LDFLAGS = -static
 else
 
 #Platform Specific Flags
-VERBOSEOUT = -DVERBOSE
+#VERBOSEOUT = -DVERBOSE
 COMPILER = gcc
 
 endif
@@ -86,6 +86,11 @@ LDFLAGS += -Wl,-Map=$(TARGET).map
 #Generate object variable from implementation .c and .S files 
 OBJS := $(SOURCES:.c=.o)
 OBJS := $(OBJS:.S=.o)
+
+.PHONY: HEXbuild
+HEXbuild: $(TARGET).elf
+	objcopy -O ihex $(TARGET).elf $(TARGET).hex
+
 
 .PHONY: build
 build: $(TARGET).elf
