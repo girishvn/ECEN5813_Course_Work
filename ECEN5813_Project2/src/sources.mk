@@ -11,11 +11,12 @@
 #
 
 SOURCES = main.c \
+	circbuf.c \
 	conversion.c \
 	data.c \
 	debug.c \
-	project1.c \
-	memory.c 
+	project2.c \
+	memory.c
 
 ifeq ($(PLATFORM),KL25Z)
 SOURCES += arch_arm32.c \

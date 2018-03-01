@@ -11,12 +11,12 @@
  *
  */
 
-#include "project1.h"
+#include "project2.h"
 
 int main()
 {
-#ifdef PROJECT1
-	project1();
+#ifdef PROJECT2
+	project2();
 #endif
 
 	return 0;

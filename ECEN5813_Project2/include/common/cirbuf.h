@@ -14,10 +14,19 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include "core_cmFunc.h"
 
+#ifdef KL25ZCRIT /* critical section protection for KL25Z */
+
+#include "core_cmFunc.h"
 #define START_CRITICAL() __enable_irq() /* functions defined in core_cmFunc.h */
 #define END_CRITICAL()  __disable_irq() /* functions defined in core_cmFunc.h */
+
+#else /* critical section protection not needed for BBB and HOST */
+
+#define START_CRITICAL()
+#define END_CRITICAL()
+
+#endif
 
 /**
  * @brief Control structure to the circular buffer
