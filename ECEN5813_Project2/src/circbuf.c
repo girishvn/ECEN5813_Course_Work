@@ -20,6 +20,7 @@ CB_e CB_init(CB_t * CB, size_t size)
         return CB_null_ptr_err;
     }
 
+    START_CRITICAL();
     CB = (CB_t *)malloc(sizeof(CB_t)); /* allocate control structure on the heap */
 
     /* Error checking */
@@ -46,6 +47,7 @@ CB_e CB_init(CB_t * CB, size_t size)
     CB->CB_tail = CB->CB_buff;
     CB->CB_size = size;
     CB->CB_count = 0;
+    END_CRITICAL();
 
     return CB_success;
 }
@@ -63,9 +65,11 @@ CB_e CB_destroy(CB_t * CB)
         return CB_null_ptr_err;
     }
 
+    START_CRITICAL();
     /* Destroy CB */
     free(CB->CB_buff); /* free buffer memory off the heap */
     free(CB); /* free control structure off the heap */
+    END_CRITICAL();
 
     return CB_success;
 }
@@ -83,6 +87,7 @@ CB_e CB_buffer_add_item(CB_t * CB, uint8_t data)
         return CB_buff_full_err;
     }
 
+    START_CRITICAL();
     if(CB->CB_head == CB->CB_buff + CB->CB_size - 1)/* iterate to next open block */
     {
         CB->CB_head = CB->CB_buff;
@@ -94,6 +99,7 @@ CB_e CB_buffer_add_item(CB_t * CB, uint8_t data)
 
     *CB->CB_head = data;
     CB->CB_count++;
+    END_CRITICAL();
 
     return CB_success;
 }
@@ -111,6 +117,7 @@ CB_e CB_buffer_remove_item(CB_t * CB, uint8_t * storedData)
         return CB_buff_empty_err;
     }
 
+    START_CRITICAL();
     *storedData = *CB->CB_tail;
     CB->CB_count--;
 
@@ -122,6 +129,7 @@ CB_e CB_buffer_remove_item(CB_t * CB, uint8_t * storedData)
     {
         CB->CB_tail++;
     }
+    END_CRITICAL();
 
     return CB_success;
 
@@ -145,5 +153,16 @@ CB_e CB_peek(CB_t * CB, size_t offset, uint8_t * storedData)
         return CB_null_ptr_err;
     }
 
-    //dont know what to write here
+    START_CRITICAL();
+    if(CB->CB_head - offset >= CB->CB_buff) /* not overflowed to other side of buffer */
+    {
+        *storedData = *(CB->CB_head - offset);
+    }
+    else /* overflowed to other side of buffer */
+    {
+        *storedData = *(CB->CB_head - offset + CB->CB_size);
+    }
+    END_CRITICAL();
+
+    return CB_success;
 }
