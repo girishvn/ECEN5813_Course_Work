@@ -41,7 +41,7 @@
 #Additional makefile with a list of all source code files
 include sources.mk
 
-TARGET = project1
+TARGET = project2
 GENFLAGS = -Wall -Werror -g -O0 -std=c99
 
 #Various platforms to build for: KL25Z, BBB, HOST (default)
@@ -63,7 +63,6 @@ LDFLAGS = -T$(LINKERFILE)
 else ifeq ($(PLATFORM),BBB)
 
 VERBOSEOUT = -DVERBOSE
-CRITPROTECT = -DKL25ZCRIT
 COMPILER = arm-linux-gnueabi-gcc
 INCLUDES = -I../include/CMSIS
 LDFLAGS = -static
@@ -72,7 +71,7 @@ LDFLAGS = -static
 else
 
 #Platform Specific Flags
-#VERBOSEOUT = -DVERBOSE
+VERBOSEOUT = -DVERBOSE
 COMPILER = gcc
 
 endif
@@ -81,12 +80,15 @@ endif
 INCLUDES +=-I../include/common
 CC = $(COMPILER)
 CFLAGS = $(INCLUDES) $(GENFLAGS) $(ARCHFLAGS)
-CPPFLAGS = -DPROJECT1 $(VERBOSEOUT) $(CRITPROTECT) $(INCLUDES)
+CPPFLAGS = -DPROJECT1 $(VERBOSEOUT) $(INCLUDES)
 LDFLAGS += -Wl,-Map=$(TARGET).map
 
 #Generate object variable from implementation .c and .S files
 OBJS := $(SOURCES:.c=.o)
 OBJS := $(OBJS:.S=.o)
+
+#Generate object variables from implementation .c for unit tested files 
+UTOBJS := $(UNITTESTSOURCES:.c=.o)
 
 .PHONY: HEXbuild
 HEXbuild: $(TARGET).elf
@@ -99,9 +101,12 @@ build: $(TARGET).elf
 .PHONY: compile-all
 compile-all: $(OBJS)
 
+.PHONY: unittests
+unit_tests: $(UTOBJS)
+	$(CC) $(UTOBJS) $(CFLAGS) -lcmocka -o $@.elf
+
 $(TARGET).elf: $(OBJS)
 	$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) -o $@
-
 
 %.i : %.c
 	$(CC) $(CPPFLAGS) -E $< -o $@

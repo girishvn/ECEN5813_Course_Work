@@ -16,10 +16,19 @@ SOURCES = main.c \
 	data.c \
 	debug.c \
 	project2.c \
-	memory.c
+	memory.c \
 
 ifeq ($(PLATFORM),KL25Z)
 SOURCES += arch_arm32.c \
+	GPIO.c \
 	system_MKL25Z4.c \
-	startup_MKL25Z4.S
+	startup_MKL25Z4.S \
+	uart.c
+endif
+
+ifeq ($(PLATFORM),HOST)
+UNITTESTSOURCES = unit_tests.c \
+	memory.c \
+	circbuf.c \
+	conversion.c
 endif

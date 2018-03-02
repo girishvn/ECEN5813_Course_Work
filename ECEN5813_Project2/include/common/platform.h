@@ -14,6 +14,15 @@
 #define __PLATFORM_H__
 
 #include <stdio.h> /* for print */
+
+#ifdef VERBOSE
+
 #define PRINTF printf /* for print */
+
+#else
+
+#define PRINTF
+
+#endif
 
 #endif /* __PLATFORM_H__ */

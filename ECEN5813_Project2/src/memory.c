@@ -54,16 +54,25 @@ uint8_t * my_memcpy(uint8_t * src, uint8_t * dst, size_t length)
         return NULL;
     }
 
+    if(dst < src && (dst + length) >= src) /* overlap of dst and src */
+    {
+      return NULL;
+    }
+
+    if(src < dst && (src + length) >= dst) /* overlap of src and dst */
+    {
+      return NULL;
+    }
+
     /* mem copy */
     if(src != dst) /* no reason to copy if the memory location is the same */
     {
-        for(i = 0; i < length; i++){
-            *(dst + i) = *(src + i); /* copy byte from source to destination */
-        }
+      for(i = 0; i < length; i++){
+          *(dst + i) = *(src + i); /* copy byte from source to destination */
+      }
     }
 
     return dst;
-
 }
 
 uint8_t * my_memset(uint8_t * src, size_t length, uint8_t value)
