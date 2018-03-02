@@ -8,15 +8,15 @@
 #
 # Usage:
 #
-# $ make 
+# $ make
 # Builds project for HOST (linux) platform
 # Generates all .o .d .map .elf files
 #
-# $ make build PLATFORM=<HOST,BBB,KL25Z> 
+# $ make build PLATFORM=<HOST,BBB,KL25Z>
 # Builds project for HOST, BBB, or KL25Z platform
 # Generates all .o .d .map .elf files
 #
-# $ make compile-all PLATFORM=<HOST,BBB,KL25Z> 
+# $ make compile-all PLATFORM=<HOST,BBB,KL25Z>
 # Compiles project source code for HOST, BBB, or KL25Z platform
 # Generates all .o .d files
 #
@@ -38,7 +38,7 @@
 #
 #
 
-#Additional makefile with a list of all source code files 
+#Additional makefile with a list of all source code files
 include sources.mk
 
 TARGET = project1
@@ -54,9 +54,9 @@ ARCH = armv6-m
 FPABI = soft
 ARCHFLAGS = -mcpu=$(CPU) -mthumb -march=$(ARCH) -mfloat-abi=$(FPABI) -mfpu=fpv4-sp-d16 --specs=nosys.specs
 
-LINKERFILE = ../platform/MKL25Z128xxx4_flash.ld 
+LINKERFILE = ../platform/MKL25Z128xxx4_flash.ld
 COMPILER = arm-none-eabi-gcc
-INCLUDES = -I../include/CMSIS -I../include/kl25z -I../platform	
+INCLUDES = -I../include/CMSIS -I../include/kl25z -I../platform
 LDFLAGS = -T$(LINKERFILE)
 
 #For Beagle Bone Black
@@ -64,7 +64,7 @@ else ifeq ($(PLATFORM),BBB)
 
 VERBOSEOUT = -DVERBOSE
 COMPILER = arm-linux-gnueabi-gcc
-INCLUDES = -I../include/CMSIS 
+INCLUDES = -I../include/CMSIS
 LDFLAGS = -static
 
 #For host platform (linux computer), default case
@@ -81,9 +81,9 @@ INCLUDES +=-I../include/common
 CC = $(COMPILER)
 CFLAGS = $(INCLUDES) $(GENFLAGS) $(ARCHFLAGS)
 CPPFLAGS = -DPROJECT1 $(VERBOSEOUT) $(INCLUDES)
-LDFLAGS += -Wl,-Map=$(TARGET).map 
+LDFLAGS += -Wl,-Map=$(TARGET).map
 
-#Generate object variable from implementation .c and .S files 
+#Generate object variable from implementation .c and .S files
 OBJS := $(SOURCES:.c=.o)
 OBJS := $(OBJS:.S=.o)
 
@@ -98,9 +98,13 @@ build: $(TARGET).elf
 .PHONY: compile-all
 compile-all: $(OBJS)
 
+.PHONY: unittests
+unittests: $(OBJS)
+	$(CC) $(OBJS) unit_test.o $(CFLAGS) -lcmocka -o unit_test 
+
+
 $(TARGET).elf: $(OBJS)
 	$(CC) $(OBJS) $(CFLAGS) $(LDFLAGS) -o $@
-
 
 %.i : %.c
 	$(CC) $(CPPFLAGS) -E $< -o $@
