@@ -15,19 +15,19 @@
 
 #include <stdint.h>
 
-#define __SCB_ADDRESS (uint32_t *) 0xE000ED00
+#define __SCB_ADDRESS (uint32_t *) 0xE000ED00 /* base address for system control block */
 
 #define __AIRCR_ADDRESS_OFFSET 0x0C
 #define __AIRCR *(__SCB_ADDRESS + __AIRCR_ADDRESS_OFFSET)
 #define __AIRCR_ENDIANNESS_OFFSET 0x0F
 #define __AIRCR_ENDIANNESS_MASK 0x00008000
 
-#define __CPUID_ADDRESS_OFFSET 0x00
+#define __CPUID_ADDRESS_OFFSET 0x00 /* CPU ID register */
 #define __CPUID *(__SCB_ADDRESS + __CPUID_ADDRESS_OFFSET)
 #define __CPUID_PART_NO_OFFSET 0x04
 #define __CPUID_PART_NO_MASK 0x0000FFF0
 
-#define __CCR_ADDRESS_OFFSET 0x0E
+#define __CCR_ADDRESS_OFFSET 0x0E /* config control register */
 #define __CCR *(__SCB_ADDRESS + __CCR_ADDRESS_OFFSET)
 #define __CCR_STK_ALIGNMENT_OFFSET 0x09
 #define __CCR_STK_ALIGNMENT_MASK 0x00000200
@@ -110,4 +110,3 @@ void ARM32_create_unaligned_access_trap(void);
 void ARM32_create_divide_by_zero_trap(void);
 
 #endif //__ARCH_ARM32_H__
-

@@ -41,10 +41,12 @@ __attribute__((always_inline)) inline uint32_t ARM32_CCR_enable_unaligned_access
 
 void ARM32_create_unaligned_access_trap(void)
 {
-    //not sure what to write here
+    /* what to do ? */
 }
 
 void ARM32_create_divide_by_zero_trap(void)
 {
-    //not sure what to write here
+    uint32_t * ptr;
+    ptr = 0x00000000; /* Code Memory */
+    *ptr = 0x00000000; /* try to set value to code memory, should throw exception */
 }
