@@ -87,6 +87,8 @@ LDFLAGS += -Wl,-Map=$(TARGET).map
 OBJS := $(SOURCES:.c=.o)
 OBJS := $(OBJS:.S=.o)
 
+UTOBJS := $(UNITTESTSOURCES:.c=.o)
+
 .PHONY: HEXbuild
 HEXbuild: $(TARGET).elf
 	objcopy -O ihex $(TARGET).elf $(TARGET).hex
@@ -99,8 +101,8 @@ build: $(TARGET).elf
 compile-all: $(OBJS)
 
 .PHONY: unittests
-unittests: $(OBJS)
-	$(CC) $(OBJS) unit_test.o $(CFLAGS) -lcmocka -o unit_test 
+unit_tests: $(UTOBJS)
+	$(CC) $(UTOBJS) $(CFLAGS) -lcmocka -o $@.elf
 
 
 $(TARGET).elf: $(OBJS)

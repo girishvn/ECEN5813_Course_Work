@@ -15,10 +15,13 @@ SOURCES = main.c \
 	data.c \
 	debug.c \
 	project1.c \
-	memory.c 
+	memory.c
 
 ifeq ($(PLATFORM),KL25Z)
 SOURCES += arch_arm32.c \
 	system_MKL25Z4.c \
 	startup_MKL25Z4.S
 endif
+
+UNITTESTSOURCES = unit_tests.c \
+	memory.c

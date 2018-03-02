@@ -9,8 +9,6 @@
 #include <setjmp.h>
 #include <cmocka.h>
 
-#include "circbuf.h"
-#include "conversion.h"
 #include "memory.h"
 
 /* MEMORY TESTS */
@@ -28,7 +26,7 @@ static void memMvTstInvldPtr(void **state)
   dstPtr = &tmpDst;
   assert_true(my_memmove(srcPtr,dstPtr,length) == NULL);
 
-  srcPtr = &tmpSrc
+  srcPtr = &tmpSrc;
   dstPtr = NULL; /* NULL ptr dst */
   assert_true(my_memmove(srcPtr,dstPtr,length) == NULL);
 
@@ -108,7 +106,6 @@ static void memMvTstDstOvrlpSrc(void **state)
 static void memMvTstDstEqSrc(void **state)
 {
   uint8_t memBuff[20];
-  uint8_t correctMem[10] = {0,1,2,3,4,5,6,8,9};
 
   uint8_t * srcPtr;
   uint8_t * dstPtr;
@@ -138,7 +135,7 @@ int main(void)
 		cmocka_unit_test(memMvTstNoOvrlp),
 		cmocka_unit_test(memMvTstSrcOvrlpDst),
 		cmocka_unit_test(memMvTstDstOvrlpSrc),
-		cmocka_unit_test(memMvTsTDstEqSrc),
+		cmocka_unit_test(memMvTstDstEqSrc),
 	};
 
   cmocka_run_group_tests_name("my_memmove tests",my_memmove_tests, NULL, NULL);
