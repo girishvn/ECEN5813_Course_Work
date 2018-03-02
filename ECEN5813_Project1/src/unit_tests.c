@@ -58,7 +58,7 @@ static void memMvTstNoOvrlp(void **state) {
 static void memMvTstSrcOvrlpDst(void **state)
 {
   uint8_t memBuff[20];
-  uint8_t correctMem[10] = {0,1,2,3,4,5,6,8,9};
+  uint8_t correctMem[10] = {0,1,2,3,4,5,6,7,8,9};
 
   uint8_t * srcPtr;
   uint8_t * dstPtr;
