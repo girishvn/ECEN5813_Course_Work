@@ -133,19 +133,20 @@ static void memSetTstInvldPtr(void **state)
   size_t length = 10;
   uint8_t val = 0x01;
 
-  assert_true(my_memmove(srcPtr,length,val) == NULL); /* NULL pointer access */
+  assert_true(my_memset(srcPtr,length,val) == NULL); /* NULL pointer access */
 
   return;
 }
 
 static void memSetTstSetVal(void **state)
 {
-  uint8_t * srcPtr = NULL; /* NULL ptr src */
+  uint8_t memBuff[10];
+  uint8_t * srcPtr = memBuff; /* valid ptr */
   size_t length = 10;
   uint8_t val = 0x01;
   uint8_t correctMem[10] = {1,1,1,1,1,1,1,1,1,1};
 
-  assert_true(my_memmove(srcPtr,length,val) == srcPtr); /* Good pointer access */
+  assert_true(my_memset(srcPtr,length,val) == srcPtr); /* Good pointer access */
   assert_memory_equal(srcPtr,correctMem,length*sizeof(uint8_t)); /* check value set */
 
   return;
@@ -157,18 +158,19 @@ static void memZeroTstInvldPtr(void **state)
   uint8_t * srcPtr = NULL; /* NULL ptr src */
   size_t length = 10;
 
-  assert_true(my_memmove(srcPtr,length) == NULL); /* NULL pointer access */
+  assert_true(my_memzero(srcPtr,length) == NULL); /* NULL pointer access */
 
   return;
 }
 
 static void memZeroTstSetVal(void **state)
 {
-  uint8_t * srcPtr = NULL; /* NULL ptr src */
+  uint8_t memBuff[10];
+  uint8_t * srcPtr = memBuff; /* valid buffer */
   size_t length = 10;
   uint8_t correctMem[10] = {0,0,0,0,0,0,0,0,0,0};
 
-  assert_true(my_memmove(srcPtr,length) == srcPtr); /* Good pointer access */
+  assert_true(my_memzero(srcPtr,length) == srcPtr); /* Good pointer access */
   assert_memory_equal(srcPtr,correctMem,length*sizeof(uint8_t)); /* check value set */
 
   return;
@@ -241,7 +243,7 @@ static void memRvrsTstAllChars(void **state)
   for(i = 0; i < (int)length; i++)
   {
     memBuff[i] = (char)i; /* buff contains values 0 - 255 char values */
-    correctMem[i] = char(255 - i); /* buff contains values 255 - 0 char values */
+    correctMem[i] = (char)(255 - i); /* buff contains values 255 - 0 char values */
   }
 
   srcPtr = (uint8_t* )&memBuff[0]; /* set pointer to source */
