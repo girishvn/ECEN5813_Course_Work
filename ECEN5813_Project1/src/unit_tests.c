@@ -82,16 +82,16 @@ static void memMvTstSrcOvrlpDst(void **state)
 static void memMvTstDstOvrlpSrc(void **state)
 {
   uint8_t memBuff[20];
-  uint8_t correctMem[10] = {0,1,2,3,4,5,6,8,9};
+  uint8_t correctMem[10] = {0,1,2,3,4,5,6,7,8,9};
 
   uint8_t * srcPtr;
   uint8_t * dstPtr;
   size_t length = 10;
 
   int i;
-  for(i = 0; i < (int)length; i++)
+  for(i = 5; i < 5 + (int)length; i++)
   {
-    memBuff[i] = i; /* buff contains values 0 - 9 */
+    memBuff[i] = i - 5; /* buff contains values 0 - 9 */
   }
 
   dstPtr = &memBuff[0];
