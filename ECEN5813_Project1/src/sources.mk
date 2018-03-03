@@ -24,4 +24,5 @@ SOURCES += arch_arm32.c \
 endif
 
 UNITTESTSOURCES = unit_tests.c \
+	conversion.c \
 	memory.c
