@@ -10,6 +10,7 @@
 #include <cmocka.h>
 
 #include "memory.h"
+#include "conversion.h"
 
 /* MEMORY TESTS */
 /* MEM MOVE */
@@ -133,19 +134,20 @@ static void memSetTstInvldPtr(void **state)
   size_t length = 10;
   uint8_t val = 0x01;
 
-  assert_true(my_memmove(srcPtr,length,val) == NULL); /* NULL pointer access */
+  assert_true(my_memset(srcPtr,length,val) == NULL); /* NULL pointer access */
 
   return;
 }
 
 static void memSetTstSetVal(void **state)
 {
-  uint8_t * srcPtr = NULL; /* NULL ptr src */
+  uint8_t memBuff[10];
+  uint8_t * srcPtr = memBuff; /* valid ptr */
   size_t length = 10;
   uint8_t val = 0x01;
   uint8_t correctMem[10] = {1,1,1,1,1,1,1,1,1,1};
 
-  assert_true(my_memmove(srcPtr,length,val) == srcPtr); /* Good pointer access */
+  assert_true(my_memset(srcPtr,length,val) == srcPtr); /* Good pointer access */
   assert_memory_equal(srcPtr,correctMem,length*sizeof(uint8_t)); /* check value set */
 
   return;
@@ -157,18 +159,19 @@ static void memZeroTstInvldPtr(void **state)
   uint8_t * srcPtr = NULL; /* NULL ptr src */
   size_t length = 10;
 
-  assert_true(my_memmove(srcPtr,length) == NULL); /* NULL pointer access */
+  assert_true(my_memzero(srcPtr,length) == NULL); /* NULL pointer access */
 
   return;
 }
 
 static void memZeroTstSetVal(void **state)
 {
-  uint8_t * srcPtr = NULL; /* NULL ptr src */
+  uint8_t memBuff[10];
+  uint8_t * srcPtr = memBuff; /* valid buffer */
   size_t length = 10;
   uint8_t correctMem[10] = {0,0,0,0,0,0,0,0,0,0};
 
-  assert_true(my_memmove(srcPtr,length) == srcPtr); /* Good pointer access */
+  assert_true(my_memzero(srcPtr,length) == srcPtr); /* Good pointer access */
   assert_memory_equal(srcPtr,correctMem,length*sizeof(uint8_t)); /* check value set */
 
   return;
@@ -241,7 +244,7 @@ static void memRvrsTstAllChars(void **state)
   for(i = 0; i < (int)length; i++)
   {
     memBuff[i] = (char)i; /* buff contains values 0 - 255 char values */
-    correctMem[i] = char(255 - i); /* buff contains values 255 - 0 char values */
+    correctMem[i] = (char)(255 - i); /* buff contains values 255 - 0 char values */
   }
 
   srcPtr = (uint8_t* )&memBuff[0]; /* set pointer to source */
@@ -251,6 +254,94 @@ static void memRvrsTstAllChars(void **state)
 
   return;
 }
+
+/* CONVERSION TESTS */
+/* atoi */
+
+static void cnvrsnAtoiTstInvldPtr(void **state)
+{
+  uint8_t * ptr = NULL;
+  uint8_t digits = 5;
+  uint32_t base = 10;
+
+  assert_true(my_atoi(ptr,digits,base) == 0); /* assert pointer returned null */
+
+  return;
+}
+
+static void cnvrsnAtoiTstZeroInt(void **state)
+{
+  char * ptr = "0";
+  uint8_t digits = 1;
+  uint32_t base = 10;
+
+  assert_true(my_atoi((uint8_t *)ptr,digits,base) == 0); /* assert pointer returned zero */
+
+  return;
+}
+
+static void cnvrsnAtoiTstMaxInt(void **state)
+{
+  char * ptrMaxPos = "2147438647";
+  char * ptrMaxNeg = "-2147438648";
+  uint8_t digits = 10;
+  uint32_t base = 10;
+
+  assert_true(my_atoi((uint8_t *)ptrMaxPos,digits,base) == 2147438647); /* assert pointer returned max pos */
+  assert_true(my_atoi((uint8_t *)ptrMaxNeg,digits,base) == -2147438648); /* assert pointer returned max neg */
+
+  return;
+}
+
+/* itoa */
+static void cnvrsnItoaTstInvldPtr(void **state)
+{
+  uint8_t * ptr = NULL;
+  uint8_t data = 0;
+  uint32_t base = 10;
+
+  assert_true(my_itoa(data,ptr,base) == 0); /* assert pointer returned null */
+
+  return;
+}
+
+static void cnvrsnItoaTstZeroInt(void **state)
+{
+  uint8_t memBuff[32];
+  uint8_t * ptr = memBuff;
+
+  char * correctMem = "0";
+
+  uint8_t data = 0;
+  uint32_t base = 10;
+
+  assert_true(my_itoa(data,ptr,base) == 1); /* assert pointer returned zero */
+  assert_memory_equal(ptr,(uint8_t *)correctMem,2*sizeof(uint8_t));
+
+  return;
+}
+
+static void cnvrsnItoaTstMaxInt(void **state)
+{
+  uint8_t memBuffMaxPos[32];
+  uint8_t * ptrMaxPos = memBuffMaxPos;
+  char * correctMemMaxPos = "2147438647";
+
+  uint8_t memBuffMaxNeg[32];
+  uint8_t * ptrMaxNeg = memBuffMaxNeg;
+  char * correctMemMaxNeg = "-2147438648";
+
+  uint32_t base = 10;
+
+  assert_true(my_itoa(2147438647,ptrMaxPos,base) == 10); /* assert pointer returned max pos */
+  assert_memory_equal(ptrMaxPos,(uint8_t *)correctMemMaxPos,11*sizeof(uint8_t));
+
+  assert_true(my_itoa(-2147438648,ptrMaxNeg,base) == 10); /* assert pointer returned max neg */
+  assert_memory_equal(ptrMaxNeg,(uint8_t *)correctMemMaxNeg,12*sizeof(uint8_t));
+
+  return;
+}
+
 
 /* MAIN */
 int main(void)
@@ -273,6 +364,14 @@ int main(void)
     cmocka_unit_test(memRvrsTstOddLen),
     cmocka_unit_test(memRvrsTstEvenLen),
     cmocka_unit_test(memRvrsTstAllChars),
+
+    cmocka_unit_test(cnvrsnAtoiTstInvldPtr),
+    cmocka_unit_test(cnvrsnAtoiTstZeroInt),
+    cmocka_unit_test(cnvrsnAtoiTstMaxInt),
+
+    cmocka_unit_test(cnvrsnItoaTstInvldPtr),
+    cmocka_unit_test(cnvrsnItoaTstZeroInt),
+    cmocka_unit_test(cnvrsnItoaTstMaxInt),
 	};
 
   cmocka_run_group_tests_name("my_memmove tests",my_memmove_tests, NULL, NULL);
