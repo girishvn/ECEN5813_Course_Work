@@ -9,8 +9,11 @@
 #include <setjmp.h>
 #include <cmocka.h>
 
+#include <stdio.h>
+
 #include "memory.h"
 #include "conversion.h"
+#include "circbuf.h"
 
 /* MEMORY TESTS */
 /* MEM MOVE */
@@ -342,12 +345,100 @@ static void cnvrsnItoaTstMaxInt(void **state)
   return;
 }
 
+/* CIRCBUF */
+
+static void CBTstAllocFree(void **state)
+{
+  size_t CB_size = 10;
+  CB_t CB;
+
+  assert_true(CB_init(&CB, CB_size) == CB_success); /* assert CB and CB struct allocted */
+  assert_true(CB_destroy(&CB) == CB_success); /* assert CB destroyed */
+
+  return;
+}
+
+static void CBTstInvldPtr(void **state)
+{
+  size_t CB_size = 10;
+
+  assert_true(CB_init(NULL, CB_size) == CB_null_ptr_err); /* assert CB and CB struct allocted */
+
+  return;
+}
+
+static void CBTstAddRmv(void **state)
+{
+  size_t CB_size = 10;
+  CB_t CB;
+  uint8_t storedData;
+  CB_init(&CB, CB_size);
+
+  int i;
+  for(i = 0; i < CB.CB_size; i++)
+  {
+    assert_true(CB_buffer_add_item(&CB, (uint8_t) i) == CB_success);
+    assert_true(CB.CB_count == (i + 1));
+  }
+
+  for(i = 0; i < CB.CB_size; i++)
+  {
+    assert_true(CB_buffer_remove_item(&CB, &storedData) == CB_success);
+    assert_true(storedData == i);
+  }
+
+  return;
+}
+
+static void CBTstFullBuff(void **state)
+{
+  size_t CB_size = 10;
+  CB_t CB;
+  CB_init(&CB, CB_size);
+  CB_e status;
+
+  int i;
+  for(i = 0; i < CB.CB_size + 1; i++)
+  {
+    status = CB_buffer_add_item(&CB, (uint8_t) i);
+  }
+
+  assert_true(status == CB_buff_full_err);
+
+  return;
+}
+
+static void CBTstEmptBuff(void **state)
+{
+  size_t CB_size = 10;
+  CB_t CB;
+  uint8_t storedData;
+  CB_init(&CB, CB_size);
+  CB_e status;
+
+  int i;
+  for(i = 0; i < CB.CB_size; i++)
+  {
+    CB_buffer_add_item(&CB, (uint8_t) i);
+  }
+
+  for(i = 0; i < CB.CB_size + 1; i++)
+  {
+    status = CB_buffer_remove_item(&CB, &storedData);
+  }
+
+  assert_true(status == CB_buff_empty_err);
+
+  return;
+}
+
 
 /* MAIN */
 int main(void)
 {
 	const struct CMUnitTest my_memmove_tests[] =
 	{
+
 		cmocka_unit_test(memMvTstInvldPtr),
 		cmocka_unit_test(memMvTstNoOvrlp),
 		cmocka_unit_test(memMvTstSrcOvrlpDst),
@@ -372,6 +463,13 @@ int main(void)
     cmocka_unit_test(cnvrsnItoaTstInvldPtr),
     cmocka_unit_test(cnvrsnItoaTstZeroInt),
     cmocka_unit_test(cnvrsnItoaTstMaxInt),
+
+    cmocka_unit_test(CBTstAllocFree),
+    cmocka_unit_test(CBTstInvldPtr),
+    cmocka_unit_test(CBTstAddRmv),
+    cmocka_unit_test(CBTstFullBuff),
+    cmocka_unit_test(CBTstEmptBuff),
+
 	};
 
   cmocka_run_group_tests_name("my_memmove tests",my_memmove_tests, NULL, NULL);

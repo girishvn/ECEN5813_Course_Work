@@ -21,14 +21,9 @@ CB_e CB_init(CB_t * CB, size_t size)
     }
 
     START_CRITICAL();
-    CB = (CB_t *)malloc(sizeof(CB_t)); /* allocate control structure on the heap */
+    //CB = (CB_t *)malloc(sizeof(CB_t)); /* allocate control structure on the heap */
 
     /* Error checking */
-    if(CB == NULL)
-    {
-        return CB_null_ptr_err;
-    }
-
     if(size <= 0)
     {
         return CB_no_length_err;
@@ -43,9 +38,9 @@ CB_e CB_init(CB_t * CB, size_t size)
     }
 
     /* Populate CB members */
-    CB->CB_head = CB->CB_buff;
-    CB->CB_tail = CB->CB_buff;
     CB->CB_size = size;
+    CB->CB_head = CB->CB_buff + CB->CB_size - 1;
+    CB->CB_tail = CB->CB_buff;
     CB->CB_count = 0;
     END_CRITICAL();
 
@@ -68,7 +63,6 @@ CB_e CB_destroy(CB_t * CB)
     START_CRITICAL();
     /* Destroy CB */
     free(CB->CB_buff); /* free buffer memory off the heap */
-    free(CB); /* free control structure off the heap */
     END_CRITICAL();
 
     return CB_success;
