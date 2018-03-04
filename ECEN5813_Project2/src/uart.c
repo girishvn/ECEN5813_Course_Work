@@ -1,9 +1,10 @@
 /*
- * uart.c
- *
- *  Created on: Mar 1, 2018
- *      Author: karroshuang
- */
+* @file uart.c
+* @brief Defines UART operation and provides functions for UART operation and initialization
+* @author Karros Huang & Girish Narayanswamy
+* @date 3/3/2017
+*/
+
 #include "uart.h"
 
 uint8_t Rxdata;

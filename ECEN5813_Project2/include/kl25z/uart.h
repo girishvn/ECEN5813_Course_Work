@@ -1,9 +1,10 @@
 /*
- * uart.h
- *
- *  Created on: Mar 1, 2018
- *      Author: karroshuang
- */
+* @file uart.h
+* @brief Creating a UART interface in order to have a method of transmitting and receiving data to development board
+* @author Karros Huang & Girish Narayanswamy
+* @date 3/3/2017
+*/
+
 #include "MKL25Z4.h"
 
 #ifndef SOURCE_UART_H_
