@@ -12,12 +12,13 @@
 #ifndef __CIRCBUF_H__
 #define __CIRCBUF_H__
 
+#define KL25ZCRIT
 #include <stdint.h>
 #include <stdlib.h>
 
 #ifdef KL25ZCRIT /* critical section protection for KL25Z */
 
-#include "core_cmFunc.h"
+#include "MKL25Z4.h"
 #define START_CRITICAL() __enable_irq() /* functions defined in core_cmFunc.h */
 #define END_CRITICAL()  __disable_irq() /* functions defined in core_cmFunc.h */
 

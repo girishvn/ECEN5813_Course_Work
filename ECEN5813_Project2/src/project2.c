@@ -9,16 +9,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "circbuf.h"
+
+#include "conversion.h"
+
+#ifndef HOSTUSE
+#include "board.h"
+#include "pin_mux.h"
+#include "clock_config.h"
 #include "uart.h"
 #include "GPIO.h"
-#include "conversion.h"
 #include "MKL25Z4.h"
+#endif
 
 uint32_t alphaCount = 0;  /* Counts the number of alphabetical characters */
 uint32_t numCount = 0;	/* Counts the number of numerical characters */
 uint32_t punctCount = 0;	/* Counts the number of punctual characters */
 uint32_t miscCount = 0;	/* Counts the number of misc. characters */
+
+void printdataHost(){
+    printf("Total Alphabetical Characters: %d\n", (int)alphaCount);
+    printf("Total Numerical Characters: %d\n", (int)numCount);
+    printf("Total Punctual Characters: %d\n", (int)punctCount);
+    printf("Total Miscellaneous Characters: %d\n", (int)miscCount);
+
+	/* Reset Buffer and data */
+	numCount = 0;
+	alphaCount = 0;
+	punctCount = 0;
+	miscCount = 0;
+}
 
 void printData()
 {
@@ -99,15 +118,55 @@ void processData()
 	}
 }
 
+void processDataHost(uint8_t *dataPointer){
+    while(*dataPointer != '\0') { /* \0 is the terminator symbol for an array */
+        if (*dataPointer != ' ') { /*Don't count white spaces */
+            CB_buffer_add_item(&CB, *dataPointer);
+            if (CB_is_full(&CB)) { /*If the buffer is full, process the data so it can write more data in*/
+                processData();
+            }
+        }
+        dataPointer++;
+    }
+}
+
 void project2(){
-	__enable_irq(); /* Enable global interrupts */
 	CB_init(&CB,32); /* initialize circular buffer CB */
+#ifdef HOSTUSE
+	/*Initializations*/
+    uint8_t str1[1000]; /*Initialize array to hold characters that are going to be read in from host machine*/
+    uint8_t* dataPtr = str1; /*Initialize pointer to the beginning of the array */
+
+    while(1){
+		/*Read in Data from Host Machine*/
+		printf("Enter a string (Maximum of 1000 Characters): ");
+		gets(str1); /* Reads a line from stdin and stores it into the string pointed to by str */
+
+		/*Process Data*/
+		processDataHost(dataPtr);
+	    dataPtr = str1; /* Reset the pointer back to the beginning of the string */
+
+		/*Print Statistics*/
+		printdataHost();
+    }
+#else
+    /*Initializations*/
+    BOARD_InitPins();
+    BOARD_BootClockRUN();
+    BOARD_InitDebugConsole();
+	__enable_irq(); /* Enable global interrupts */
 	UART_configure(); /* Configure UART */
 	uint8_t Data;
+
+	/*Process Data*/
+//	uint8_t s = 0xD6;
+//	uint8_t* ptr = &s;
 	while(1){
-		CB_peek(&CB,0,&Data);
-		if(CB_is_full(&CB) || Data == 0x0A){ /*If the buffer is full, process the data so it can write more data in, or if the last data in the buffer is the terminator, print and dump it*/
+//		UART_send(ptr);
+		CB_peek(&CB,0,&Data); /*If the buffer is full, process the data so it can write more data in, or if the last data in the buffer is the terminator, print and dump it*/
+		if(CB_is_full(&CB) || Data == 0x0A){
 			processData();
 		}
 	}
+#endif
 }
