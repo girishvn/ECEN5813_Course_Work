@@ -6,17 +6,19 @@
 */
 
 #include "uart.h"
-
-uint8_t Rxdata;
+#include "MKL25Z4.h"
+#include "GPIO.h"
 
 void UART_configure(){
+	NVIC_EnableIRQ(UART0_IRQn); //enable UART0 interrupts
+	UART0->C2 &= ~(0xB<<2); /*Disable Transmitter and Receiver & Receiver Interrupt*/
+
 	/*Set UART0 RX & TX to PTA1 & PTA2 Respectively*/
 	PORTA->PCR[1] |= PORT_PCR_MUX(0x02); //set UART0_RX to PTA1
 	PORTA->PCR[2] |= PORT_PCR_MUX(0x02); //set UART0_TX to PTA2
 
 	/*Control Register Configurations*/
 	UART0->C1 |= 0x00; /*Sets UART0 to 8 bit no parity.*/
-	UART0->C2 |= (0xB<<2); /*Enable Transmitter and Receiver & Receiver Interrupt*/
 	UART0->C3 |= 0x00; /*Ensuring all configurations are default*/
 	UART0->S2 |= 0x00; /*More default standard UART Configs*/
 
@@ -27,9 +29,10 @@ void UART_configure(){
 	SIM->SOPT2 |= (0x01<<26); /*Set to MCGFLLCLK Clock */
 	SIM->SCGC4 |= (0x01<<10); /*Enable UART0 CLock Gate*/
 	SIM->SCGC5 |= (0x01<<9);
-	UART0->BDH = (UART0_BDH_SBR_MASK) & (sbr>>8); /* Mask out upper 5 SBR bits */
-	UART0->BDL = (UART0_BDL_SBR_MASK) & (sbr & 0xFF); /* Mask out lower 8 SBR bits */
+	UART0->BDH = (UART0_BDH_SBR_MASK) & (SBR>>8); /* Mask out upper 5 SBR bits */
+	UART0->BDL = (UART0_BDL_SBR_MASK) & (SBR & 0xFF); /* Mask out lower 8 SBR bits */
 	UART0->C4 &= (~UART0_C4_OSR_MASK) | OSR; /*Set Over Sampling Ratio Register to 8 */
+	UART0->C2 |= (0xB<<2); /*Enable Transmitter and Receiver & Receiver Interrupt*/
 }
 
 void UART_send(uint8_t* tx_data){
@@ -62,8 +65,10 @@ uint8_t* UART_receive_n(uint8_t* rx_block_data, uint32_t length){
 	return rx_block_data; /*Return the pointer*/
 }
 
-void UART0_IRQHANDLER(){
-	if(UART0->S1 & UART_S1_RDRF_MASK){ /* If the Buffer is full transfer data into a global variable*/
-		Rxdata = UART0->D;
+void UART0_IRQHandler(){
+	if(UART0->S1 & UART_S1_RDRF_MASK){
+		CB_buffer_add_item(&CB,UART0->D); /*Store UART Buffer Data into buffer */
 	}
+	PORTA->ISFR = 0xFFFFFFFF; /*Clear the interrupt Flag*/
+
 }

@@ -5,13 +5,16 @@
 * @date 3/3/2017
 */
 
-#include "MKL25Z4.h"
+#include "circbuf.h"
+
 
 #ifndef SOURCE_UART_H_
 #define SOURCE_UART_H_
 
 #define BUSCLK 48000000 // BUS_CLK
 #define BAUD 38400 // define UART baud rate here
+
+CB_t CB; /* create global instance of circular buffer */
 
 /*
  * @brief Configures UART
@@ -66,7 +69,7 @@ uint8_t* UART_receive_n(uint8_t* rx_block_data, uint32_t length);
  *
  * @return VOID
  */
-void UART0_IRQ_HANDLER();
+//void UART0_IRQHandler();
 
 
 
