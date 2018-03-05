@@ -1,6 +1,10 @@
 /**
  * @file unit_tests.c
- * @brief
+ * @brief a set of unit tests for memory, conversion, and circbuf functions
+ *
+ * @author Girish Narayanswamy & Karros Huang
+ * @date 4 March 2018
+ * @version 1.0
  *
  */
 
@@ -9,14 +13,19 @@
 #include <setjmp.h>
 #include <cmocka.h>
 
-#include <stdio.h>
-
 #include "memory.h"
 #include "conversion.h"
 #include "circbuf.h"
 
-/* MEMORY TESTS */
-/* MEM MOVE */
+/* MEMORY TESTS: MEM MOVE */
+
+/**
+ * @brief Tests mem move for invalid pointer input
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memMvTstInvldPtr(void **state)
 {
   uint8_t tmpSrc;
@@ -37,6 +46,13 @@ static void memMvTstInvldPtr(void **state)
   return;
 }
 
+/**
+ * @brief Tests mem move for non overlapping memory segments
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memMvTstNoOvrlp(void **state) {
     uint8_t memBuff[20];
 
@@ -59,6 +75,13 @@ static void memMvTstNoOvrlp(void **state) {
     return;
 }
 
+/**
+ * @brief Tests mem move for overlapping memory segments (SRC over DST)
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memMvTstSrcOvrlpDst(void **state)
 {
   uint8_t memBuff[20];
@@ -83,6 +106,13 @@ static void memMvTstSrcOvrlpDst(void **state)
   return;
 }
 
+/**
+ * @brief Tests mem move for overlapping memory segments (DST over SRC)
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memMvTstDstOvrlpSrc(void **state)
 {
   uint8_t memBuff[20];
@@ -107,6 +137,13 @@ static void memMvTstDstOvrlpSrc(void **state)
   return;
 }
 
+/**
+ * @brief Tests mem move for SRC equal to DST
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memMvTstDstEqSrc(void **state)
 {
   uint8_t memBuff[20];
@@ -130,7 +167,15 @@ static void memMvTstDstEqSrc(void **state)
   return;
 }
 
-/* MEM SET */
+/* MEMORY TESTS: MEM SET */
+
+/**
+ * @brief Tests mem set for invalid input pointer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memSetTstInvldPtr(void **state)
 {
   uint8_t * srcPtr = NULL; /* NULL ptr src */
@@ -142,6 +187,13 @@ static void memSetTstInvldPtr(void **state)
   return;
 }
 
+/**
+ * @brief Tests mem set for valid memory segment
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memSetTstSetVal(void **state)
 {
   uint8_t memBuff[10];
@@ -156,7 +208,15 @@ static void memSetTstSetVal(void **state)
   return;
 }
 
-/* MEM ZERO */
+/* MEMORY TESTS: MEM ZERO */
+
+/**
+ * @brief Tests mem zero for invalid input pointer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memZeroTstInvldPtr(void **state)
 {
   uint8_t * srcPtr = NULL; /* NULL ptr src */
@@ -167,6 +227,13 @@ static void memZeroTstInvldPtr(void **state)
   return;
 }
 
+/**
+ * @brief Tests mem zero for valid input pointer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memZeroTstSetVal(void **state)
 {
   uint8_t memBuff[10];
@@ -180,7 +247,15 @@ static void memZeroTstSetVal(void **state)
   return;
 }
 
-/* MEM REVERSE */
+/* MEMORY TESTS: MEM REVERSE */
+
+/**
+ * @brief Tests mem reverse for invalid input pointer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memRvrsTstInvldPtr(void **state)
 {
   uint8_t * srcPtr = NULL; /* NULL ptr src */
@@ -191,6 +266,13 @@ static void memRvrsTstInvldPtr(void **state)
   return;
 }
 
+/**
+ * @brief Tests mem reverse for valid input pointer and odd count of vals
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memRvrsTstOddLen(void **state)
 {
   uint8_t memBuff[20];
@@ -213,6 +295,13 @@ static void memRvrsTstOddLen(void **state)
   return;
 }
 
+/**
+ * @brief Tests mem reverse for valid input pointer and even count of vals
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memRvrsTstEvenLen(void **state)
 {
   uint8_t memBuff[20];
@@ -235,6 +324,13 @@ static void memRvrsTstEvenLen(void **state)
   return;
 }
 
+/**
+ * @brief Tests mem reverse for valid input pointer and all 256 ASCII char values
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void memRvrsTstAllChars(void **state)
 {
   char memBuff[256];
@@ -258,9 +354,15 @@ static void memRvrsTstAllChars(void **state)
   return;
 }
 
-/* CONVERSION TESTS */
-/* atoi */
+/* CONVERSION TESTS: ATOI */
 
+/**
+ * @brief Tests atoi for invalid input pointer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void cnvrsnAtoiTstInvldPtr(void **state)
 {
   uint8_t * ptr = NULL;
@@ -272,6 +374,13 @@ static void cnvrsnAtoiTstInvldPtr(void **state)
   return;
 }
 
+/**
+ * @brief Tests atoi for zero input chatacter
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void cnvrsnAtoiTstZeroInt(void **state)
 {
   char * ptr = "0";
@@ -283,6 +392,13 @@ static void cnvrsnAtoiTstZeroInt(void **state)
   return;
 }
 
+/**
+ * @brief Tests atoi for maximum input values
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void cnvrsnAtoiTstMaxInt(void **state)
 {
   char * ptrMaxPos = "2147438647";
@@ -296,7 +412,15 @@ static void cnvrsnAtoiTstMaxInt(void **state)
   return;
 }
 
-/* itoa */
+/* CONVERSION TETS: ITOA */
+
+/**
+ * @brief Tests itoa for invalid input pointer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void cnvrsnItoaTstInvldPtr(void **state)
 {
   uint8_t * ptr = NULL;
@@ -308,6 +432,13 @@ static void cnvrsnItoaTstInvldPtr(void **state)
   return;
 }
 
+/**
+ * @brief Tests itoa for zero input value
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void cnvrsnItoaTstZeroInt(void **state)
 {
   uint8_t memBuff[32];
@@ -324,6 +455,13 @@ static void cnvrsnItoaTstZeroInt(void **state)
   return;
 }
 
+/**
+ * @brief Tests atoi for maximum input values
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void cnvrsnItoaTstMaxInt(void **state)
 {
   uint8_t memBuffMaxPos[32];
@@ -345,8 +483,15 @@ static void cnvrsnItoaTstMaxInt(void **state)
   return;
 }
 
-/* CIRCBUF */
+/* CIRCBUF TEST: INIT AND DESTROY*/
 
+/**
+ * @brief Tests CB for successful init and destroy of CB on heap
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void CBTstAllocFree(void **state)
 {
   size_t CB_size = 10;
@@ -358,6 +503,13 @@ static void CBTstAllocFree(void **state)
   return;
 }
 
+/**
+ * @brief Tests CB for unsuccessful init given null pointer to CB
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void CBTstInvldPtr(void **state)
 {
   size_t CB_size = 10;
@@ -367,6 +519,13 @@ static void CBTstInvldPtr(void **state)
   return;
 }
 
+/**
+ * @brief Tests CB for add and remove from the buffer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void CBTstAddRmv(void **state)
 {
   size_t CB_size = 10;
@@ -390,6 +549,13 @@ static void CBTstAddRmv(void **state)
   return;
 }
 
+/**
+ * @brief Tests CB for buffer full error once add is performed on full buffer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void CBTstFullBuff(void **state)
 {
   size_t CB_size = 10;
@@ -408,6 +574,13 @@ static void CBTstFullBuff(void **state)
   return;
 }
 
+/**
+ * @brief Tests CB for buffer empty error once remove is performed on empty buffer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
 static void CBTstEmptBuff(void **state)
 {
   size_t CB_size = 10;
@@ -432,13 +605,134 @@ static void CBTstEmptBuff(void **state)
   return;
 }
 
+/**
+ * @brief Tests CB for succesfull add around edge of circulr buffer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
+static void CBTstWrpAdd(void **state)
+{
+  size_t CB_size = 10;
+  CB_t CB;
+  CB_init(&CB, CB_size);
+  uint8_t storedData;
+  int i;
+
+  CB.CB_head = CB.CB_buff + CB.CB_size/2;
+  CB.CB_tail = CB.CB_head + 1;
+
+  for(i = 0; i < CB.CB_size; i++)
+  {
+    assert_true(CB_buffer_add_item(&CB, (uint8_t) i) == CB_success);
+  }
+
+  for(i = 0; i < CB.CB_size; i++)
+  {
+    assert_true(CB_peek(&CB,i,&storedData) == CB_success);
+    assert_true(storedData == 9 - i);
+  }
+
+  return;
+}
+
+/**
+ * @brief Tests CB for succesfull remove around edge of circulr buffer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
+static void CBTstWrpRmv(void **state)
+{
+  size_t CB_size = 10;
+  CB_t CB;
+  CB_init(&CB, CB_size);
+  uint8_t storedData;
+  int i;
+
+  CB.CB_head = CB.CB_buff + CB.CB_size/2;
+  CB.CB_tail = CB.CB_head + 1;
+
+  for(i = 0; i < CB.CB_size; i++)
+  {
+    assert_true(CB_buffer_add_item(&CB, (uint8_t) i) == CB_success);
+  }
+
+  for(i = 0; i < CB.CB_size; i++)
+  {
+    assert_true(CB_peek(&CB,i,&storedData) == CB_success);
+    assert_true(storedData == 9 - i);
+  }
+
+  for(i = 0; i < CB.CB_size; i++)
+  {
+    assert_true(CB_buffer_remove_item(&CB, &storedData) == CB_success);
+    assert_true(storedData == i);
+  }
+
+  return;
+}
+
+/**
+ * @brief Tests CB for buffer empty error once remove is performed on empty buffer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
+static void CBTstOverEmpt(void **state)
+{
+  size_t CB_size = 10;
+  CB_t CB;
+  uint8_t storedData;
+  CB_init(&CB, CB_size);
+  CB_e status;
+
+  int i;
+
+  for(i = 0; i < CB.CB_size + 1; i++)
+  {
+    status = CB_buffer_remove_item(&CB, &storedData);
+    assert_true(status == CB_buff_empty_err);
+  }
+
+  return;
+}
+
+/**
+ * @brief Tests CB for buffer full error once add is performed on full buffer
+ *
+ * @param void ** state (used by cmocka unit test framework)
+ *
+ * @return void
+ */
+static void CBTstOverFull(void **state)
+{
+  size_t CB_size = 10;
+  CB_t CB;
+  CB_init(&CB, CB_size);
+  CB_e status;
+
+  int i;
+  for(i = 0; i < CB.CB_size; i++)
+  {
+    CB_buffer_add_item(&CB, (uint8_t) i);
+  }
+
+  status = CB_buffer_add_item(&CB,10);
+  assert_true(status == CB_buff_full_err);
+
+  return;
+}
 
 /* MAIN */
 int main(void)
 {
-	const struct CMUnitTest my_memmove_tests[] =
+	const struct CMUnitTest my_memmove_tests[] = /* framework to hold all tests */
 	{
-
+    /* Memory function tests */
 		cmocka_unit_test(memMvTstInvldPtr),
 		cmocka_unit_test(memMvTstNoOvrlp),
 		cmocka_unit_test(memMvTstSrcOvrlpDst),
@@ -456,6 +750,7 @@ int main(void)
     cmocka_unit_test(memRvrsTstEvenLen),
     cmocka_unit_test(memRvrsTstAllChars),
 
+    /* Conversion function tests */
     cmocka_unit_test(cnvrsnAtoiTstInvldPtr),
     cmocka_unit_test(cnvrsnAtoiTstZeroInt),
     cmocka_unit_test(cnvrsnAtoiTstMaxInt),
@@ -464,14 +759,19 @@ int main(void)
     cmocka_unit_test(cnvrsnItoaTstZeroInt),
     cmocka_unit_test(cnvrsnItoaTstMaxInt),
 
+    /* Circbuf function tests */
     cmocka_unit_test(CBTstAllocFree),
     cmocka_unit_test(CBTstInvldPtr),
     cmocka_unit_test(CBTstAddRmv),
     cmocka_unit_test(CBTstFullBuff),
     cmocka_unit_test(CBTstEmptBuff),
-
+    cmocka_unit_test(CBTstWrpAdd),
+    cmocka_unit_test(CBTstWrpRmv),
+    cmocka_unit_test(CBTstOverFull),
+    cmocka_unit_test(CBTstOverEmpt),
 	};
 
+  /* run all tests */
   cmocka_run_group_tests_name("my_memmove tests",my_memmove_tests, NULL, NULL);
 
   return 0;

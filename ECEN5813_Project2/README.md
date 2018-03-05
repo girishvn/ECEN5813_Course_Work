@@ -1,2 +1,63 @@
 This is the read me file for project 2 of ecen 5813
-This document will be updated throughout the project to reflect the various functionalities of the project. 
+This document will be updated throughout the project to reflect the various functionalities of the project.
+
+UNIT TEST OUTPUT:
+[==========] Running 28 test(s).
+[ RUN      ] memMvTstInvldPtr
+[       OK ] memMvTstInvldPtr
+[ RUN      ] memMvTstNoOvrlp
+[       OK ] memMvTstNoOvrlp
+[ RUN      ] memMvTstSrcOvrlpDst
+[       OK ] memMvTstSrcOvrlpDst
+[ RUN      ] memMvTstDstOvrlpSrc
+[       OK ] memMvTstDstOvrlpSrc
+[ RUN      ] memMvTstDstEqSrc
+[       OK ] memMvTstDstEqSrc
+[ RUN      ] memSetTstInvldPtr
+[       OK ] memSetTstInvldPtr
+[ RUN      ] memSetTstSetVal
+[       OK ] memSetTstSetVal
+[ RUN      ] memZeroTstInvldPtr
+[       OK ] memZeroTstInvldPtr
+[ RUN      ] memZeroTstSetVal
+[       OK ] memZeroTstSetVal
+[ RUN      ] memRvrsTstInvldPtr
+[       OK ] memRvrsTstInvldPtr
+[ RUN      ] memRvrsTstOddLen
+[       OK ] memRvrsTstOddLen
+[ RUN      ] memRvrsTstEvenLen
+[       OK ] memRvrsTstEvenLen
+[ RUN      ] memRvrsTstAllChars
+[       OK ] memRvrsTstAllChars
+[ RUN      ] cnvrsnAtoiTstInvldPtr
+[       OK ] cnvrsnAtoiTstInvldPtr
+[ RUN      ] cnvrsnAtoiTstZeroInt
+[       OK ] cnvrsnAtoiTstZeroInt
+[ RUN      ] cnvrsnAtoiTstMaxInt
+[       OK ] cnvrsnAtoiTstMaxInt
+[ RUN      ] cnvrsnItoaTstInvldPtr
+[       OK ] cnvrsnItoaTstInvldPtr
+[ RUN      ] cnvrsnItoaTstZeroInt
+[       OK ] cnvrsnItoaTstZeroInt
+[ RUN      ] cnvrsnItoaTstMaxInt
+[       OK ] cnvrsnItoaTstMaxInt
+[ RUN      ] CBTstAllocFree
+[       OK ] CBTstAllocFree
+[ RUN      ] CBTstInvldPtr
+[       OK ] CBTstInvldPtr
+[ RUN      ] CBTstAddRmv
+[       OK ] CBTstAddRmv
+[ RUN      ] CBTstFullBuff
+[       OK ] CBTstFullBuff
+[ RUN      ] CBTstEmptBuff
+[       OK ] CBTstEmptBuff
+[ RUN      ] CBTstWrpAdd
+[       OK ] CBTstWrpAdd
+[ RUN      ] CBTstWrpRmv
+[       OK ] CBTstWrpRmv
+[ RUN      ] CBTstOverFull
+[       OK ] CBTstOverFull
+[ RUN      ] CBTstOverEmpt
+[       OK ] CBTstOverEmpt
+[==========] 28 test(s) run.
+[  PASSED  ] 28 test(s).

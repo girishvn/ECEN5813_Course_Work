@@ -20,6 +20,10 @@
 # Compiles project source code for HOST, BBB, or KL25Z platform
 # Generates all .o .d files
 #
+# make unit_tests PLATFORM=HOST
+# makes unit_test.elf file to run all unit tests for
+# memory conversion and circbuf implementations
+#
 # $ make clean
 # Removes all generate files
 # Removes all .o .d .asm .i .elf .asm files
@@ -41,6 +45,7 @@
 #Additional makefile with a list of all source code files
 include sources.mk
 
+#data processing file
 TARGET = project2
 GENFLAGS = -Wall -Werror -g -O0 -std=c99
 
@@ -87,7 +92,7 @@ LDFLAGS += -Wl,-Map=$(TARGET).map
 OBJS := $(SOURCES:.c=.o)
 OBJS := $(OBJS:.S=.o)
 
-#Generate object variables from implementation .c for unit tested files 
+#Generate object variables from implementation .c for unit tested files
 UTOBJS := $(UNITTESTSOURCES:.c=.o)
 
 .PHONY: HEXbuild

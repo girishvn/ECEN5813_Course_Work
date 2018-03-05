@@ -4,7 +4,7 @@
  *
  * This source file holds implementations for memory abstraction functions from the memory.h file
  *
- * @author Girish Narayanswamy
+ * @author Girish Narayanswamy & Karros Huang
  * @date February 1 2018
  * @version 1.0
  *

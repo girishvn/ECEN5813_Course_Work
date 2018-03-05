@@ -16,7 +16,7 @@
 int main()
 {
 #ifdef PROJECT2
-	project2();
+	//project2();
 #endif
 
 	return 0;
