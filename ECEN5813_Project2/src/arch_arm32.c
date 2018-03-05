@@ -41,7 +41,16 @@ __attribute__((always_inline)) inline uint32_t ARM32_CCR_enable_unaligned_access
 
 void ARM32_create_unaligned_access_trap(void)
 {
-    /* what to do ? */
+  uint16_t * testVal; /* pointed to 16 bit int */
+
+  struct unalignedMem { /* define packed struct */
+    uint8_t val1;
+    uint16_t val2; /* unaligned mem member */
+  } __attribute__((packed));
+
+  struct unalignedMem testMem;
+  testVal = &(testMem.val2);
+  *testVal = 100; /* dereference unaligned piece of memory */
 }
 
 void ARM32_create_divide_by_zero_trap(void)

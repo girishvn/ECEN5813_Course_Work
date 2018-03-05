@@ -76,6 +76,7 @@ LDFLAGS = -static
 else
 
 #Platform Specific Flags
+HOSTUSE = -DHOSTUSE
 VERBOSEOUT = -DVERBOSE
 COMPILER = gcc
 
@@ -85,7 +86,7 @@ endif
 INCLUDES +=-I../include/common
 CC = $(COMPILER)
 CFLAGS = $(INCLUDES) $(GENFLAGS) $(ARCHFLAGS)
-CPPFLAGS = -DPROJECT1 $(VERBOSEOUT) $(INCLUDES)
+CPPFLAGS = -DPROJECT2 $(VERBOSEOUT) $(HOSTUSE) $(INCLUDES)
 LDFLAGS += -Wl,-Map=$(TARGET).map
 
 #Generate object variable from implementation .c and .S files
