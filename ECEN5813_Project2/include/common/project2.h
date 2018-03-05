@@ -4,9 +4,16 @@
 * @author Karros Huang & Girish Narayanswamy
 * @date 3/3/2017
 */
+#include <stdint.h>
+#include "circbuf.h"
 
 #ifndef PROJECT2_H_
 #define PROJECT2_H_
+
+#ifdef HOSTUSE
+	CB_t CB;
+#endif
+
 
 /*
  * @brief Main function
@@ -18,13 +25,22 @@
 void project2();
 
 /*
- * @brief Process an input sequence of characters
+ * @brief Process an input sequence of characters from UART
  * Reads through the data stored in the circular buffer and counts how many alphabet, numerical, punctional, and misc. characters there are
  * @param none
  *
  * @return VOID
  */
 void processData();
+
+/*
+ * @brief Process an input sequence of characters from Host
+ * Reads through the data stored in the array from get() into the circular buffer and counts how many alphabet, numerical, punctional, and misc. characters there are
+ * @param dataPointer pointing to the beginning of the array
+ *
+ * @return VOID
+ */
+void processDataHost(uint8_t *dataPointer);
 
 /*
  * @brief Prints the data
@@ -34,6 +50,15 @@ void processData();
  * @return VOID
  */
 void printData();
+
+/*
+ * @brief Prints the data
+ * Prints the counts of characters into stdout.
+ * @param none
+ *
+ * @return VOID
+ */
+void printdataHost();
 
 
 #endif /* PROJECT2_H_ */
