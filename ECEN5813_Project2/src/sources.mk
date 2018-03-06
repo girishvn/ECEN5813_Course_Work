@@ -15,15 +15,15 @@ SOURCES = main.c \
 	conversion.c \
 	data.c \
 	debug.c \
+	GPIO.c \
 	project2.c \
 	memory.c \
+	uart.c 
 
 ifeq ($(PLATFORM),KL25Z)
 SOURCES += arch_arm32.c \
-	GPIO.c \
 	system_MKL25Z4.c \
-	startup_MKL25Z4.S \
-	uart.c
+	startup_MKL25Z4.S
 endif
 
 ifeq ($(PLATFORM),HOST)

@@ -5,7 +5,6 @@
 * @date 3/3/2017
 */
 
-#include "pin_mux.h"
 #include "uart.h"
 #include "MKL25Z4.h"
 #include "GPIO.h"

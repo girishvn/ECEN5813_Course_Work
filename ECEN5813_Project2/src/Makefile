@@ -79,6 +79,7 @@ else
 HOSTUSE = -DHOSTUSE
 VERBOSEOUT = -DVERBOSE
 COMPILER = gcc
+INCLUDES = -I../include/CMSIS -I../include/kl25z -I../platform
 
 endif
 

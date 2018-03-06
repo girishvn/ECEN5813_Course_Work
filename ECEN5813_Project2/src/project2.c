@@ -5,21 +5,21 @@
  *      Author: karroshuang
  */
 
-#include "project2.h"
+ #ifdef __GNUC__
+ #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+ #endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 
+#include "project2.h"
 #include "conversion.h"
+#include "circbuf.h"
 
-#ifndef HOSTUSE
-#include "board.h"
-#include "pin_mux.h"
-#include "clock_config.h"
 #include "uart.h"
 #include "GPIO.h"
 #include "MKL25Z4.h"
-#endif
 
 uint32_t alphaCount = 0;  /* Counts the number of alphabetical characters */
 uint32_t numCount = 0;	/* Counts the number of numerical characters */
@@ -128,41 +128,36 @@ void processDataHost(uint8_t *dataPointer){
         }
         dataPointer++;
     }
+    processData();
 }
 
 void project2(){
+
 	CB_init(&CB,32); /* initialize circular buffer CB */
+
 #ifdef HOSTUSE
 	/*Initializations*/
     uint8_t str1[1000]; /*Initialize array to hold characters that are going to be read in from host machine*/
     uint8_t* dataPtr = str1; /*Initialize pointer to the beginning of the array */
 
-    while(1){
-		/*Read in Data from Host Machine*/
-		printf("Enter a string (Maximum of 1000 Characters): ");
-		gets(str1); /* Reads a line from stdin and stores it into the string pointed to by str */
+  	/*Read in Data from Host Machine*/
+  	printf("Enter a string (Maximum of 1000 Characters): ");
+  	scanf("%255[^\n]", str1); /* Reads a line from stdin and stores it into the string pointed to by str */
+  	/*Process Data*/
+  	processDataHost(dataPtr);
+    dataPtr = str1; /* Reset the pointer back to the beginning of the string */
 
-		/*Process Data*/
-		processDataHost(dataPtr);
-	    dataPtr = str1; /* Reset the pointer back to the beginning of the string */
+  	/*Print Statistics*/
+  	printdataHost();
 
-		/*Print Statistics*/
-		printdataHost();
-    }
 #else
     /*Initializations*/
-    BOARD_InitPins();
-    BOARD_BootClockRUN();
-    BOARD_InitDebugConsole();
 	__enable_irq(); /* Enable global interrupts */
 	UART_configure(); /* Configure UART */
 	uint8_t Data;
 
 	/*Process Data*/
-//	uint8_t s = 0xD6;
-//	uint8_t* ptr = &s;
 	while(1){
-//		UART_send(ptr);
 		CB_peek(&CB,0,&Data); /*If the buffer is full, process the data so it can write more data in, or if the last data in the buffer is the terminator, print and dump it*/
 		if(CB_is_full(&CB) || Data == 0x0A){
 			processData();
