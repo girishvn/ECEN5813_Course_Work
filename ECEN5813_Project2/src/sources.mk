@@ -16,9 +16,10 @@ SOURCES = main.c \
 	data.c \
 	debug.c \
 	GPIO.c \
+	project1.c \
 	project2.c \
 	memory.c \
-	uart.c 
+	uart.c
 
 ifeq ($(PLATFORM),KL25Z)
 SOURCES += arch_arm32.c \

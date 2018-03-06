@@ -1,8 +1,8 @@
 /*
- * project2.c
+ * @file project2.c
  *
- *  Created on: Mar 4, 2018
- *      Author: karroshuang
+ *  @date Created on: Mar 4, 2018
+ *  @author karroshuang
  */
 
  #ifdef __GNUC__
@@ -80,6 +80,7 @@ void printData()
 	uint32_t miscLength = 32;
 	uint8_t* miscA = miscArray;
 	UART_send_n(miscA, miscLength);
+  miscCount--; /* remove extra counted character */
 	uint8_t miscASCLength = my_itoa(miscCount, miscASCII, 10);
 	UART_send_n(miscASCII, miscASCLength);
 	UART_send(EOLchar);
@@ -111,7 +112,10 @@ void processData()
 		}
 		else if(Data == 10){ /*If Received data is the new line (terminator) print all the data out */
 			  printData();
-		  }
+		}
+    else if(Data == ' '){ /* dont include white space */
+        continue;
+    }
 		else{ /*Received data is a miscellaneous character*/
 		  miscCount++;
 		}
