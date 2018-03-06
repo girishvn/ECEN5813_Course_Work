@@ -14,7 +14,11 @@
 #define BUSCLK 48000000 // BUS_CLK
 #define BAUD 38400 // define UART baud rate here
 
-CB_t CB; /* create global instance of circular buffer */
+CB_d CB; /* create global instance of circular buffer */
+uint32_t demo_Array_len = 0;
+uint8_t* demoPointer;
+uint8_t demoArray[1000];
+uint8_t demoTransferFlag = 0;
 
 /*
  * @brief Configures UART
@@ -72,5 +76,6 @@ uint8_t* UART_receive_n(uint8_t* rx_block_data, uint32_t length);
 //void UART0_IRQHandler();
 
 
+void demo_AddItem(uint8_t Data);
 
 #endif /* SOURCE_UART_H_ */

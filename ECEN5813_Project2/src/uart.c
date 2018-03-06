@@ -8,6 +8,7 @@
 #include "uart.h"
 #include "MKL25Z4.h"
 
+
 void UART_configure(){
 	NVIC_EnableIRQ(UART0_IRQn); /*enable UART0 interrupts*/
 	UART0->C2 &= ~(0xB<<2); /*Disable Transmitter and Receiver & Receiver Interrupt*/
@@ -64,10 +65,20 @@ uint8_t* UART_receive_n(uint8_t* rx_block_data, uint32_t length){
 	return rx_block_data; /*Return the pointer*/
 }
 
+void demo_AddItem(uint8_t Data){
+	while(Data != 0x0A){
+		*demoPointer = Data;
+		demoPointer++;
+		demo_Array_len++;
+	}
+	demoPointer = demoArray;
+	demoTransferFlag = 1;
+}
+
 void UART0_IRQHandler(){
 	if(UART0->S1 & UART_S1_RDRF_MASK){
-		CB_buffer_add_item(&CB,UART0->D); /*Store UART Buffer Data into buffer */
+//		CB_buffer_add_item(&CB,UART0->D); /*Store UART Buffer Data into buffer */
+		demo_AddItem(UART0->D);
 	}
 	PORTA->ISFR = 0xFFFFFFFF; /*Clear the interrupt Flag*/
-
 }

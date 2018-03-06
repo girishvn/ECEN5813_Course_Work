@@ -158,3 +158,112 @@ CB_e CB_peek(CB_t * CB, size_t offset, uint8_t * storedData)
 
     return CB_success;
 }
+
+/***************DEMO*************************/
+
+
+CB_e CB_initDEMO(CB_d * CB, size_t size)
+{
+    /* Error checking */
+    if(CB == NULL)
+    {
+        return CB_null_ptr_err;
+    }
+
+    /* Error checking */
+    if(size <= 0)
+    {
+        return CB_no_length_err;
+    }
+
+    START_CRITICAL();
+    CB->CB_buff = (CB_buff_t *)malloc(size*sizeof(CB_buff_t)); /* allocate buffer memory on the heap */
+
+    /* Error checking */
+    if(CB->CB_buff == NULL)
+    {
+        return CB_null_ptr_err;
+    }
+
+    /* Populate CB members */
+    CB->CB_size = size;
+    CB->CB_head = CB->CB_buff + CB->CB_size - 1;
+    CB->CB_tail = CB->CB_buff;
+    CB->CB_count = 0;
+    END_CRITICAL();
+
+    return CB_success;
+}
+
+CB_e CB_buffer_add_itemDEMO(CB_d * CB, uint8_t * string, uint8_t length)
+{
+    /* Error checking */
+    if(CB == NULL)
+    {
+        return CB_null_ptr_err;
+    }
+
+    if((CB->CB_count == CB->CB_size))
+    {
+        return CB_buff_full_err;
+    }
+
+    START_CRITICAL();
+    if(CB->CB_head == CB->CB_buff + CB->CB_size - 1)/* iterate to next open block */
+    {
+        CB->CB_head = CB->CB_buff;
+    }
+    else
+    {
+        CB->CB_head++;
+    }
+
+    CB->CB_head->string = (uint8_t *)malloc(length*(sizeof(uint8_t)));
+    my_memcpy(string, CB->CB_head->string, length*sizeof(uint8_t));
+    CB->CB_head->length = length;
+
+    uint16_t CRC = (uint16_t)(*CB->CB_head->string);
+	for(i = 1; i < length; i++)
+	{
+		CRC ^= (uint16_t)(*CB->CB_head->string + i);
+	}
+	CB->CB_head->CRC = CRC;
+
+    CB->CB_count++;
+    END_CRITICAL();
+
+    return CB_success;
+}
+
+CB_e CB_buffer_remove_itemDEMO(CB_d * CB)
+{
+    /* Error checking */
+    if(CB == NULL)
+    {
+        return CB_null_ptr_err;
+    }
+
+    if(CB->CB_count == 0)
+    {
+        return CB_buff_empty_err;
+    }
+
+    START_CRITICAL();
+    //*storedData = *CB->CB_tail->string;
+    CB->CB_count--;
+
+    free(CB->CB_tail->string); /* free information */
+
+    if(CB->CB_tail == CB->CB_buff + CB->CB_size - 1) /* wrap around */
+    {
+        CB->CB_tail = CB->CB_buff;
+    }
+    else /* else increment */
+    {
+        CB->CB_tail++;
+    }
+    END_CRITICAL();
+
+    return CB_success;
+}
+

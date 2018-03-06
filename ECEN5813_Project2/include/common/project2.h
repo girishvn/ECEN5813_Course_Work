@@ -5,9 +5,15 @@
 * @date 3/3/2017
 */
 #include <stdint.h>
+#include "circbuf.h"
 
 #ifndef PROJECT2_H_
 #define PROJECT2_H_
+
+#ifdef HOSTUSE
+	CB_t CB;
+#endif
+
 
 /*
  * @brief Main function
@@ -54,5 +60,6 @@ void printData();
  */
 void printdataHost();
 
+void demo_AddItem(uint8_t Data);
 
 #endif /* PROJECT2_H_ */

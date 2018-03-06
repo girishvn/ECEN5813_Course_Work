@@ -1,10 +1,9 @@
-#include "project1.h"
 #include "project2.h"
-//#define PROJECT2
+#define PROJECT2
 
 int main(void) {
 #ifdef PROJECT1
-  project1();
+	project();
 #endif
 
 #ifdef PROJECT2

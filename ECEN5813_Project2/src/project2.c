@@ -1,25 +1,24 @@
 /*
- * @file project2.c
+ * project2.c
  *
- *  @date Created on: Mar 4, 2018
- *  @author karroshuang
+ *  Created on: Mar 4, 2018
+ *      Author: karroshuang
  */
 
- #ifdef __GNUC__
- #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
- #endif
-
+#include "project2.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-
-#include "project2.h"
 #include "conversion.h"
-#include "circbuf.h"
 
+#ifndef HOSTUSE
+#include "board.h"
+#include "pin_mux.h"
+#include "clock_config.h"
 #include "uart.h"
 #include "GPIO.h"
 #include "MKL25Z4.h"
+#endif
 
 uint32_t alphaCount = 0;  /* Counts the number of alphabetical characters */
 uint32_t numCount = 0;	/* Counts the number of numerical characters */
@@ -80,7 +79,7 @@ void printData()
 	uint32_t miscLength = 32;
 	uint8_t* miscA = miscArray;
 	UART_send_n(miscA, miscLength);
-  miscCount--; /* remove extra counted character */
+	miscCount--;
 	uint8_t miscASCLength = my_itoa(miscCount, miscASCII, 10);
 	UART_send_n(miscASCII, miscASCLength);
 	UART_send(EOLchar);
@@ -99,10 +98,10 @@ void processData()
 	while(CB_buffer_remove_item(&CB,&Data) != CB_buff_empty_err)
 	{
 		if((Data >= 'a' && Data <= 'z') || (Data >= 'A' && Data <= 'Z')){ /*Received data is a Alphabet character*/
-		  alphaCount++;
+			alphaCount++;
 		}
 		else if(Data >= '0' && Data <= '9'){ /*Received data is a numerical character*/
-		  numCount++;
+			numCount++;
 		}
 		else if(Data == '!' || Data == '.' || Data == ',' || Data == '?' || /*Received data is a Punctual character. 0x27 = "'"*/
 				Data == '"' || Data == ';' || Data == ':' || Data == 0x27 ||
@@ -110,14 +109,14 @@ void processData()
 				Data == ']' || Data == '{' || Data == '}'){
 		  punctCount++;
 		}
-		else if(Data == 10){ /*If Received data is the new line (terminator) print all the data out */
-			  printData();
+		else if(Data == 0xA){ /*If Received data is the new line (terminator) print all the data out */
+			printData();
+		  }
+		else if(Data == ' '){ /*Don't count white spaces*/
+			continue;
 		}
-    else if(Data == ' '){ /* dont include white space */
-        continue;
-    }
 		else{ /*Received data is a miscellaneous character*/
-		  miscCount++;
+			miscCount++;
 		}
 	}
 }
@@ -132,40 +131,60 @@ void processDataHost(uint8_t *dataPointer){
         }
         dataPointer++;
     }
-    processData();
 }
 
 void project2(){
-
-	CB_init(&CB,32); /* initialize circular buffer CB */
-
+	CB_initDEMO(&CB,3); /* initialize circular buffer CB */
 #ifdef HOSTUSE
 	/*Initializations*/
     uint8_t str1[1000]; /*Initialize array to hold characters that are going to be read in from host machine*/
     uint8_t* dataPtr = str1; /*Initialize pointer to the beginning of the array */
 
-  	/*Read in Data from Host Machine*/
-  	printf("Enter a string (Maximum of 1000 Characters): ");
-  	scanf("%255[^\n]", str1); /* Reads a line from stdin and stores it into the string pointed to by str */
-  	/*Process Data*/
-  	processDataHost(dataPtr);
-    dataPtr = str1; /* Reset the pointer back to the beginning of the string */
+    while(1){
+		/*Read in Data from Host Machine*/
+		printf("Enter a string (Maximum of 1000 Characters): ");
+		gets((char *)str1); /* Reads a line from stdin and stores it into the string pointed to by str */
 
-  	/*Print Statistics*/
-  	printdataHost();
+		/*Process Data*/
+		processDataHost(dataPtr);
+	    dataPtr = str1; /* Reset the pointer back to the beginning of the string */
 
+		/*Print Statistics*/
+		printdataHost();
+    }
 #else
     /*Initializations*/
+    BOARD_InitPins();
+    BOARD_BootClockRUN();
+    BOARD_InitDebugConsole();
 	__enable_irq(); /* Enable global interrupts */
 	UART_configure(); /* Configure UART */
-	uint8_t Data;
+//	uint8_t Data;
 
 	/*Process Data*/
 	while(1){
-		CB_peek(&CB,0,&Data); /*If the buffer is full, process the data so it can write more data in, or if the last data in the buffer is the terminator, print and dump it*/
-		if(CB_is_full(&CB) || Data == 0x0A){
-			processData();
+//		CB_peek(&CB,0,&Data); /*If the buffer is full, process the data so it can write more data in, or if the last data in the buffer is the terminator, print and dump it*/
+//		if(CB_is_full(&CB) || Data == 0x0A){
+//			processData();
+		if(CB.CB_count == CB.CB_size){
+			demo_process();
+		}
+		if(demoTransferFlag == 1){
+			CB_buffer_add_itemDEMO(&CB, demoPointer, demo_Array_len);
+			demo_Array_len = 0;
+			demoTransferFlag = 0;
 		}
 	}
 #endif
+}
+void demo_process(void){
+	uint8_t EOLchar[1] = {0x0D};
+	while(!((CB.CB_count) == 0)){
+		for(int i = 0; i < CB.CB_tail->length; i++){
+			UART_send(CB.CB_tail->string);
+			(CB.CB_tail->string)++;
+		}
+		UART_send(EOLchar);
+		CB_buffer_remove_itemDEMO(&CB);
+	}
 }

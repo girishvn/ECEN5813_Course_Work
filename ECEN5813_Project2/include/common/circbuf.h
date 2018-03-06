@@ -12,10 +12,11 @@
 #ifndef __CIRCBUF_H__
 #define __CIRCBUF_H__
 
+#define KL25ZCRIT
 #include <stdint.h>
 #include <stdlib.h>
 
-#ifndef HOSTUSE /* critical section protection for KL25Z */
+#ifdef KL25ZCRIT /* critical section protection for KL25Z */
 
 #include "MKL25Z4.h"
 #define START_CRITICAL() __enable_irq() /* functions defined in core_cmFunc.h */
@@ -146,5 +147,27 @@ int CB_is_empty(CB_t * CB);
  * @return a CB status enumeration value based on the added item of the CB
  */
 CB_e CB_peek(CB_t * CB, size_t offset, uint8_t * storedData);
+
+
+typedef struct
+{
+    uint8_t length;
+    uint8_t * string;
+    uint16_t CRC;
+} CB_buff_t;
+
+typedef struct
+{
+    CB_buff_t * CB_buff; /* The allocated memory for the buffer elements */
+    CB_buff_t * CB_head; /* Pointer to Head of the buffer or newest added item */
+    CB_buff_t * CB_tail; /* Pointer to Tail or oldest item added */
+    size_t CB_size; /* Number of items to allocate the buffer for */
+    size_t CB_count; /* Current item count in the buffer */
+} CB_d;
+
+CB_e CB_initDEMO(CB_d * CB, size_t size);
+CB_e CB_buffer_add_itemDEMO(CB_d * CB, uint8_t * string, uint8_t length);
+CB_e CB_buffer_remove_itemDEMO(CB_d * CB);
+
 
 #endif //__CIRCBUF_H__
