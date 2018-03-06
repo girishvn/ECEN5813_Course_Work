@@ -7,15 +7,14 @@
 
 #include "uart.h"
 #include "MKL25Z4.h"
-#include "GPIO.h"
 
 void UART_configure(){
-	NVIC_EnableIRQ(UART0_IRQn); //enable UART0 interrupts
+	NVIC_EnableIRQ(UART0_IRQn); /*enable UART0 interrupts*/
 	UART0->C2 &= ~(0xB<<2); /*Disable Transmitter and Receiver & Receiver Interrupt*/
 
 	/*Set UART0 RX & TX to PTA1 & PTA2 Respectively*/
-	PORTA->PCR[1] |= PORT_PCR_MUX(0x02); //set UART0_RX to PTA1
-	PORTA->PCR[2] |= PORT_PCR_MUX(0x02); //set UART0_TX to PTA2
+	PORTA->PCR[1] |= PORT_PCR_MUX(0x02); /*Set UART0_RX to PTA1*/
+	PORTA->PCR[2] |= PORT_PCR_MUX(0x02); /*Set UART0_TX to PTA2*/
 
 	/*Control Register Configurations*/
 	UART0->C1 |= 0x00; /*Sets UART0 to 8 bit no parity.*/
@@ -23,9 +22,9 @@ void UART_configure(){
 	UART0->S2 |= 0x00; /*More default standard UART Configs*/
 
 	/*Baud Configuration*/
-	uint16_t SBR;  // variable used to set the SBR field in the UART baud rate register in order to configure the baud rate
-	uint16_t OSR = 8; // set oversampling ratio to 8
-	SBR = BUSCLK/((OSR+1)*BAUD); //sets 13 bit SBR value based on desired baud rate and system clock frequency
+	uint16_t SBR;  /* Variable used to set the SBR field for Baud Config. */
+	uint16_t OSR = 8; /* Set oversampling ratio to 8 */
+	SBR = BUSCLK/((OSR+1)*BAUD); /* sets 13 bit SBR value based on desired baud rate and system clock frequency */
 	SIM->SOPT2 |= (0x01<<26); /*Set to MCGFLLCLK Clock */
 	SIM->SCGC4 |= (0x01<<10); /*Enable UART0 CLock Gate*/
 	SIM->SCGC5 |= (0x01<<9);
