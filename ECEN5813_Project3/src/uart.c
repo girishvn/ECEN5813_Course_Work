@@ -1,16 +1,20 @@
-/*
-* @file uart.c
-* @brief Defines UART operation and provides functions for UART operation and initialization
-* @author Karros Huang & Girish Narayanswamy
-* @date 3/3/2017
-*/
+/**
+ * @file uart.c
+ * @brief Defines UART operation and provides functions for UART operation and initialization
+ *
+ * @author Karros Huang & Girish Narayanswamy
+ * @date March 3 2018
+ * @version 1.0
+ *
+ */
 
 #include "uart.h"
 #include "MKL25Z4.h"
+#include "circbuf.h"
 
-
-void UART_configure(){
-	NVIC_EnableIRQ(UART0_IRQn); /*enable UART0 interrupts*/
+void UART_configure()
+{
+	//NVIC_EnableIRQ(UART0_IRQn); /*enable UART0 interrupts*/ //GIRISH WHYYY????
 	UART0->C2 &= ~(0xB<<2); /*Disable Transmitter and Receiver & Receiver Interrupt*/
 
 	/*Set UART0 RX & TX to PTA1 & PTA2 Respectively*/
@@ -35,29 +39,35 @@ void UART_configure(){
 	UART0->C2 |= (0xB<<2); /*Enable Transmitter and Receiver & Receiver Interrupt*/
 }
 
-void UART_send(uint8_t* tx_data){
+void UART_send(uint8_t* tx_data)
+{
 	while(!(UART0->S1 & UART_S1_TDRE_MASK)); /*Wait to push data onto buffer until the buffer is cleared*/
 	UART0->D = *tx_data; /*Send the data into the data buffer*/
 }
 
-void UART_send_n(uint8_t* tx_block_data, uint32_t length){
+void UART_send_n(uint8_t* tx_block_data, uint32_t length)
+{
 	uint32_t i;
-	for(i = 0;  i < length; i++){
+	for(i = 0;  i < length; i++)
+	{
 		UART_send(tx_block_data); /*Send a byte of data into the buffer*/
 		tx_block_data++; /*Increment the pointer to send the next byte */
 	}
 	tx_block_data -= length; /*Reset the pointer back to the start of the string */
 }
 
-uint8_t UART_receive(uint8_t* rx_data){
+uint8_t UART_receive(uint8_t* rx_data)
+{
 	while(!(UART0->S1 & UART_S1_RDRF_MASK)); /*Wait in this loop until UART buffer is full*/
 	*rx_data = UART0->D; /*Transfer data in UART buffer into a local variable*/
 	return *rx_data; /*Return the data*/
 }
 
-uint8_t* UART_receive_n(uint8_t* rx_block_data, uint32_t length){
+uint8_t* UART_receive_n(uint8_t* rx_block_data, uint32_t length)
+{
 	uint32_t i;
-	for(i = 0; i < length; i++){
+	for(i = 0; i < length; i++)
+	{
 		UART_receive(rx_block_data); /*Receive a byte of data from the buffer*/
 		rx_block_data++; /*Increment the pointer to store the next byte*/
 	}
@@ -65,9 +75,11 @@ uint8_t* UART_receive_n(uint8_t* rx_block_data, uint32_t length){
 	return rx_block_data; /*Return the pointer*/
 }
 
-void UART0_IRQHandler(){
-	if(UART0->S1 & UART_S1_RDRF_MASK){
-		CB_buffer_add_item(&CB,UART0->D); /*Store UART Buffer Data into buffer */
+void UART0_IRQHandler()
+{
+	if(UART0->S1 & UART_S1_RDRF_MASK)
+	{
+		CB_buffer_add_item(CB,UART0->D); /*Store UART Buffer Data into buffer */
 	}
 	PORTA->ISFR = 0xFFFF; /*Clear the interrupt Flag*/
 }

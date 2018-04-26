@@ -10,6 +10,7 @@
  * @version 1.0
  *
  */
+
 #ifndef __CONVERSION_H__
 #define __CONVERSION_H__
 
@@ -27,7 +28,7 @@
  *
  * @return uint8_t ASCII equivalent character.
  */
-        uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base);
+uint8_t my_itoa(int32_t data, uint8_t *ptr, uint32_t base);
 
 /**
  * @brief Convert data from an ASCII string into a standard integer type.
@@ -41,7 +42,6 @@
  *
  * @return int32_t standard integer type.
  */
-        int32_t my_atoi(uint8_t *ptr, uint8_t digits, uint32_t base);
+int32_t my_atoi(uint8_t *ptr, uint8_t digits, uint32_t base);
 
 #endif /* __CONVERSION_H__ */
-

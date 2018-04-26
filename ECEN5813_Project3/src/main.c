@@ -1,26 +1,41 @@
-//#include "project1.h"
-#include "project2.h"
-#include "Homework_4.h"
+/**
+ * @file main.c
+ * @brief Main file of the program
+ *
+ * @author Girish Narayanswamy & Karros Huang
+ * @date April 10, 2018
+ * @version 1.0
+ *
+ */
 
-//#define PROJECT1
-//#define PROJECT2
-#define PROJECT3
-//#define HOMEWORK4
 
-int main(void) {
-#ifdef PROJECT1
-	project();
+/* CORE FILES IF TARGET KL25Z */
+#if !defined(KL25ZCMNDLNBLD) && defined(KL25ZUSE) /* includes for on ide debugging */
+#include "board.h"
+#include "pin_mux.h"
+#include "clock_config.h"
 #endif
 
-#ifdef PROJECT2
-  project2();
+#include "project3.h"
+
+int main(void) {
+  /* Init board hardware. */
+#if !defined(KL25ZCMNDLNBLD) && defined(KL25ZUSE)
+  BOARD_InitPins();
+  BOARD_BootClockRUN();
+  BOARD_InitDebugConsole();
 #endif
 
 #ifdef PROJECT3
-  project3();
+  return project3();
 #endif
 
-#ifdef HOMEWORK4;
-  homework4();
+#ifdef PROJECT2
+
 #endif
+
+#ifdef PROJECT1
+
+#endif
+
 }

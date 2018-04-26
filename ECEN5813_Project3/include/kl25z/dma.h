@@ -22,6 +22,15 @@
 #define DMASIZE8 0x01
 #define DMAMAXBYTENUM 0x0FFFFF
 
+#define INCREMENT 0x01
+#define NONINCREMENT 0x00
+
+/* times for systick profilings */
+//uint32_t dmaStart = 0; /* test values, unsused */
+//uint32_t dmaEnd = 0;
+
+uint8_t dmaTransfer = 0x00; /* global val to show if transfer is done*/
+
 /**
  * @brief Initializes DMA peripheral module
  *
@@ -36,7 +45,7 @@
  *
  * @return pointer to the destination that data was moved to
  */
-uint8_t dmaInit(uint8_t * src, uint8_t * dst, size_t length, uint8_t size);
+uint8_t dmaInit(uint8_t * src, uint8_t * dst, size_t length, uint8_t size, uint8_t srcInc);
 
 /**
  * @brief Moves a piece of memory from one place to another using DMA

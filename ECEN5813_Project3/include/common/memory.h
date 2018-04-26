@@ -5,13 +5,13 @@
  * This header file provides an abstraction of memory sets, allocations, and frees via function calls
  *
  * @author Girish Narayanswamy
- * @date February 1 2018
- * @version 1.0
+ * @date April 1, 2018
+ * @version 2.0
  *
  */
 
-#ifndef __MEMORY_H__
-#define __MEMORY_H__
+#ifndef SOURCE_MEMORY_H_
+#define SOURCE_MEMORY_H_
 
 #include <stdint.h>  /* include standard data types */
 #include <stddef.h> /* include size_t and NULL type */
@@ -59,13 +59,14 @@ uint8_t * my_memcpy(uint8_t * src, uint8_t * dst, size_t length);
 uint8_t * my_memset(uint8_t * src, size_t length, uint8_t value);
 
 /**
- * @brief Sets all values at a memory location to zero
+ * @brief Sets all values at a memory location to zero using DMA
  *
  * Given a pointer to a memory location and a length, this will set all memory locations to zero for the
- * given number of bytes
+ * given number of bytes. Memory is set via DMA to free up processor time (ideal for large mem sets)
  *
  * @param src pointer to the source to set to zero
  * @param length number of bytes to set to zero
+ * @param size value of 0, 1, 2 that defines the byte transfer size, see header for size defs
  *
  * @return pointer to the source where values were set
  */
@@ -106,4 +107,4 @@ int32_t * reserve_words(size_t length);
  */
 uint8_t free_words(uint32_t * src);
 
-#endif //__MEMORY_H__
+#endif /* SOURCE_MEMORY_H_ */

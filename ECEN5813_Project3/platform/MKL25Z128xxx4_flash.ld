@@ -8,14 +8,13 @@
 **     Compiler:            GNU C Compiler
 **     Reference manual:    KL25P80M48SF0RM, Rev.3, Sep 2012
 **     Version:             rev. 2.5, 2015-02-19
-**     Build:               b150220
+**     Build:               b170214
 **
 **     Abstract:
 **         Linker file for the GNU C Compiler
 **
-**     Copyright (c) 2015 Freescale Semiconductor, Inc.
-**     All rights reserved.
-**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2017 NXP
 **     Redistribution and use in source and binary forms, with or without modification,
 **     are permitted provided that the following conditions are met:
 **
@@ -26,7 +25,7 @@
 **       list of conditions and the following disclaimer in the documentation and/or
 **       other materials provided with the distribution.
 **
-**     o Neither the name of Freescale Semiconductor, Inc. nor the names of its
+**     o Neither the name of the copyright holder nor the names of its
 **       contributors may be used to endorse or promote products derived from this
 **       software without specific prior written permission.
 **
@@ -41,8 +40,8 @@
 **     (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 **     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 **
-**     http:                 www.freescale.com
-**     mail:                 support@freescale.com
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
 **
 ** ###################################################################
 */
@@ -50,13 +49,15 @@
 /* Entry Point */
 ENTRY(Reset_Handler)
 
-HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x0400;
-STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
+/* Increased heap size to large DMA transfer tests */
+HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x3000;
+STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400; 
+M_VECTOR_RAM_SIZE = DEFINED(__ram_vector_table__) ? 0x0200 : 0x0;
 
 /* Specify the memory areas */
 MEMORY
 {
-  m_interrupts          (RX)  : ORIGIN = 0x00000000, LENGTH = 0x00000100
+  m_interrupts          (RX)  : ORIGIN = 0x00000000, LENGTH = 0x00000200
   m_flash_config        (RX)  : ORIGIN = 0x00000400, LENGTH = 0x00000010
   m_text                (RX)  : ORIGIN = 0x00000410, LENGTH = 0x0001FBF0
   m_data                (RW)  : ORIGIN = 0x1FFFF000, LENGTH = 0x00004000
@@ -180,6 +181,20 @@ SECTIONS
     _mtb_end = .;
   } > m_data
 
+  .interrupts_ram :
+  {
+    . = ALIGN(4);
+    __VECTOR_RAM__ = .;
+    __interrupts_ram_start__ = .; /* Create a global symbol at data start */
+    *(.m_interrupts_ram)     /* This is a user defined section */
+    . += M_VECTOR_RAM_SIZE;
+    . = ALIGN(4);
+    __interrupts_ram_end__ = .; /* Define a global symbol at data end */
+  } > m_data
+
+  __VECTOR_RAM = DEFINED(__ram_vector_table__) ? __VECTOR_RAM__ : ORIGIN(m_interrupts);
+  __RAM_VECTOR_TABLE_SIZE_BYTES = DEFINED(__ram_vector_table__) ? (__interrupts_ram_end__ - __interrupts_ram_start__) : 0x0;
+
   .data : AT(__DATA_ROM)
   {
     . = ALIGN(4);
@@ -193,6 +208,8 @@ SECTIONS
   } > m_data
 
   __DATA_END = __DATA_ROM + (__data_end__ - __data_start__);
+  text_end = ORIGIN(m_text) + LENGTH(m_text);
+  ASSERT(__DATA_END <= text_end, "region m_text overflowed with text and data")
 
   /* Uninitialized data section */
   .bss :
@@ -217,6 +234,7 @@ SECTIONS
     __HeapBase = .;
     . += HEAP_SIZE;
     __HeapLimit = .;
+    __heap_limit = .; /* Add for _sbrk */
   } > m_data
 
   .stack :

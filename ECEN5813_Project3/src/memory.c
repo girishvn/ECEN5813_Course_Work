@@ -5,14 +5,13 @@
  * This source file holds implementations for memory abstraction functions from the memory.h file
  *
  * @author Girish Narayanswamy & Karros Huang
- * @date February 1 2018
- * @version 1.0
+ * @date April 1, 2018
+ * @version 2.0
  *
  */
 
 #include "memory.h"
 #include <stdlib.h> /* includes malloc and free */
-
 
 uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
 {
@@ -29,13 +28,15 @@ uint8_t * my_memmove(uint8_t * src, uint8_t * dst, size_t length)
     /* mem move */
     if(src > dst) /* first scenario src > dst in mem */
     {
-        for(i = 0; i < length; i++){
+        for(i = 0; i < length; i++)
+        {
             *(dst + i) = *(src + i); /* move byte from source to destination */
         }
     }
     else if(src < dst) /* second scenario src < dst in mem */
     {
-        for(i = length; i > 0; i--){
+        for(i = length; i > 0; i--)
+        {
             *(dst + i - 1) = *(src + i - 1); /* move byte from source to destination */
         }
     }
@@ -67,7 +68,8 @@ uint8_t * my_memcpy(uint8_t * src, uint8_t * dst, size_t length)
     /* mem copy */
     if(src != dst) /* no reason to copy if the memory location is the same */
     {
-      for(i = 0; i < length; i++){
+      for(i = 0; i < length; i++)
+      {
           *(dst + i) = *(src + i); /* copy byte from source to destination */
       }
     }
@@ -87,7 +89,8 @@ uint8_t * my_memset(uint8_t * src, size_t length, uint8_t value)
     }
 
     /* mem set */
-    for(i = 0; i < length; i++){
+    for(i = 0; i < length; i++)
+    {
         *(src + i) = value; /* set value to byte */
     }
 
@@ -106,7 +109,8 @@ uint8_t * my_memzero(uint8_t * src, size_t length)
     }
 
     /* mem set */
-    for(i = 0; i < length; i++){
+    for(i = 0; i < length; i++)
+    {
         *(src + i) = 0; /* set byte to zero */
     }
 
@@ -126,7 +130,8 @@ uint8_t * my_reverse(uint8_t * src, size_t length)
     }
 
     /* mem reverse */
-    for(i = 0; i < length/2; i++) /* iterate through array to reverse values */ {
+    for(i = 0; i < length/2; i++) /* iterate through array to reverse values */
+    {
         temp = *(src + i); /* value stored as temp */
         *(src + i) = *(src + length - i - 1); /* swap values to be reversed */
         *(src + length - i - 1) = temp;

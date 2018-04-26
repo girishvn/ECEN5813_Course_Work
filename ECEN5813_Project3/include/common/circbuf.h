@@ -15,7 +15,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#ifndef HOSTUSE /* critical section protection for KL25Z */
+#ifdef KL25ZUSE /* critical section protection for KL25Z */
 
 #include "MKL25Z4.h"
 #define START_CRITICAL() __enable_irq() /* functions defined in core_cmFunc.h */
@@ -45,6 +45,7 @@ typedef struct
     size_t CB_count; /* Current item count in the buffer */
 } CB_t;
 
+CB_t ** CB; /* global instance of circular buffer */
 
 /**
  * @brief  Circular buffer function status enumeration

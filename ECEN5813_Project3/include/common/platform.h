@@ -5,17 +5,18 @@
  * This header file creates an independent layer to switch between
  * which platform specific lower level functions to use, as well as print useful architecture sizes.
  *
- * @author Karros Huang
- * @date Feb. 1, 2018
- * @version 1.0
+ * @author Karros Huang & Girish Narayanswamy
+ * @date April. 15, 2018
+ * @version 2.0
  *
  */
-#ifndef __PLATFORM_H__
-#define __PLATFORM_H__
+
+#ifndef SOURCE_PLATFORM_H_
+#define SOURCE_PLATFORM_H_
 
 #include <stdio.h> /* for print */
 
-#ifdef VERBOSE
+#if defined(VERBOSE) && (defined(BBBUSE) || defined(HOSTUSE))
 
 #define PRINTF printf /* for print */
 
@@ -25,4 +26,4 @@
 
 #endif
 
-#endif /* __PLATFORM_H__ */
+#endif /* SOURCE_PLATFORM_H_ */

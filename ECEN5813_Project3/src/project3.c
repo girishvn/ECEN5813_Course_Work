@@ -1,23 +1,27 @@
-/*
- * project3.c
+/**
+ * @file project3.c
+ * @brief Implementation of the project3.h file
  *
- *  Created on: Apr 7, 2018
- *      Author: karroshuang
+ * This source file holds a the logic program flow for project 3 for PES EcEN 5813
+ *
+ * @author Girish Narayanswamy
+ * @date April 10 2018
+ * @version 1.0
+ *
  */
+
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#endif
+
 #include "project3.h"
+#include "profiling.h"
 
-void project3(){
-	/*Initializations*/
-    BOARD_InitPins();
-    BOARD_BootClockRUN();
-    BOARD_InitDebugConsole();
-	__enable_irq(); /* Enable global interrupts */
-	GPIO_nrf_init();
-	while(1){
-		Toggle_Red_LED();
-		for(int i = 0; i < 1000000; i++){
-			__asm("nop");  //in CW tools use asm("nop");
-		}
-	}
+uint8_t project3(void)
+{
+
+	memProfiler(); /* profile for memory array */
+
+	while(1); /* infinite loop */
+
 }
-
