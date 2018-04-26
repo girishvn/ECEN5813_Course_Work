@@ -1,19 +1,13 @@
-/**
- * @file GPIO.c
- * @brief Implementation of the GPIO.h file
- *
- * Defines GPIO operation and provides functions for GPIO operation and initialization
- *
- * @author Girish Narayanswamy & Karros Huang
- * @date March 3, 2018
- * @version 1.0
- *
- */
+/*
+* @file uart.c
+* @brief Defines GPIO operation and provides functions for GPIO operation and initialization
+* @author Karros Huang & Girish Narayanswamy
+* @date 3/3/2017
+*/
 
 #include "GPIO.h"
 
-void GPIO_Configure()
-{
+void GPIO_Configure(){
 
 	/*Enable System Clock for PORT B&D*/
 	SIM->SCGC5 |= SIM_SCGC5_PORTB(1);
@@ -34,50 +28,44 @@ void GPIO_Configure()
 	GPIOD->PDOR |= 0x01<<1; /*Set Output of Blue LED Low*/
 }
 
-void Toggle_Red_LED()
-{
+void Toggle_Red_LED(){
 	GPIOB->PDOR ^= (0x01<<18); /*Flipping the RED LED Output bit to toggle between 0 & 1 */
 }
 
-__attribute__((always_inline)) inline void PORTB_Set(uint8_t bit_num)
-{
+__attribute__((always_inline)) inline void PORTB_Set(uint8_t bit_num){
 	GPIOB->PSOR |= (0x01<<bit_num); /* Sets port B pin X Data output bit to 1 */
 }
 
-__attribute__((always_inline)) inline void PORTD_Set(uint8_t bit_num)
-{
+__attribute__((always_inline)) inline void PORTD_Set(uint8_t bit_num){
 	GPIOD->PSOR |= (0x01<<bit_num); /* Sets port D pin X Data output bit to 1 */
 }
 
-__attribute__((always_inline)) inline void PORTB_Clear(uint8_t bit_num)
-{
+__attribute__((always_inline)) inline void PORTB_Clear(uint8_t bit_num){
 	GPIOB->PCOR |= (0x01<<bit_num); /* Sets port B pin X Data output bit to 0 */
 }
 
-__attribute__((always_inline)) inline void PORTD_Clear(uint8_t bit_num)
-{
+__attribute__((always_inline)) inline void PORTD_Clear(uint8_t bit_num){
 	GPIOD->PCOR |= (0x01<<bit_num); /* Sets port D pin X Data output bit to 0 */
 }
 
-__attribute__((always_inline)) inline void PORTB_Toggle(uint8_t bit_num)
-{
+__attribute__((always_inline)) inline void PORTB_Toggle(uint8_t bit_num){
 	GPIOB->PTOR |= (0x01<<bit_num); /* Flips port B pin X Data output bit */
 }
 
-__attribute__((always_inline)) inline void PORTD_Toggle(uint8_t bit_num)
-{
+__attribute__((always_inline)) inline void PORTD_Toggle(uint8_t bit_num){
 	GPIOD->PTOR |= (0x01<<bit_num); /* Flips port D pin X Data output bit */
 }
 
-__attribute__((always_inline)) inline void GPIO_nrf_init()
-{
-	/*Enable System Clock for PORT E*/
-	SIM->SCGC5 |= SIM_SCGC5_PORTE(1);
+__attribute__((always_inline)) inline void GPIO_nrf_init(){
+	/*Enable System Clock for Port C & SPI0*/
+	SIM->SCGC5 |= SIM_SCGC5_PORTC_MASK;
+	SIM->SCGC4 |= SIM_SCGC4_SPI0_MASK;
 
 	/*Put GPIO Pins in SPI Mode*/
-	PORTE->PCR[1] |= PORT_PCR_MUX(0x02); /*Set SPI1_MOSI to PTE1*/
-	PORTE->PCR[2] |= PORT_PCR_MUX(0x02); /*Set SPI1_SCK to PTE2*/
-	PORTE->PCR[3] |= PORT_PCR_MUX(0x02); /*Set SPI1_MISO to PTE3*/
-	PORTE->PCR[4] |= PORT_PCR_MUX(0x02); /*Set SPI1_PCS0 to PTE4*/
-
+	PORTC->PCR[6] |= PORT_PCR_MUX(0x02); /*Set SPI0_MOSI to PTC6*/
+	PORTC->PCR[5] |= PORT_PCR_MUX(0x02); /*Set SPI0_SCK to PTC5*/
+	PORTC->PCR[7] |= PORT_PCR_MUX(0x02); /*Set SPI0_MISO to PTC7*/
+	PORTC->PCR[9] |= PORT_PCR_MUX(0x01); /*Set GPIO mode to PTC9*/
+	GPIOC->PDDR |= 1<<9;  				 /*Set PTC9 (PCS) to Output*/
+	GPIOC->PSOR |= 1<<9; 				 /*Set PTC9 (PCS) to High*/
 }
