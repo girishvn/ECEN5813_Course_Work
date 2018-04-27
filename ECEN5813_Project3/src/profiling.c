@@ -36,13 +36,12 @@ uint32_t myMemMv[4] = {0, 0, 0, 0};
 #ifdef KL25ZUSE
 uint32_t myDMAMemSet[4] = {0, 0, 0, 0};
 uint32_t myDMAMemMv[4] = {0, 0, 0, 0};
-/*uint32_t dmaInitTime = 0;*/ /*for test to check init time overhead for dma */
 uint32_t stackUsage = 0;
 #endif
 
 void memProfiler(void)
 {
-	#ifdef KL25Z
+	#ifdef KL25ZUSE
 	configureSysTick(); /* setup up sys tick for timing */
 	#endif
 
@@ -164,7 +163,11 @@ void generateProfileReport(void)
 	uint8_t bytes1000Len = 15;
 	uint8_t bytes5000Len = 15;
 	uint8_t lineEndLen = 1;
+	uint8_t stackUseTitleLen = 22;
+	uint8_t stackUseLen = 24;
 
+	uint8_t stackUseTitle[] = "STACK USAGE PROFILING\n";
+	uint8_t stackUse[] = "Stack Usage (In Bytes): ";
 	uint8_t mySetDMATitle[] = "DMA Mem Set Profiling Information (In Clk Cycles)\n";
 	uint8_t myMvDMATitle[] = "DMA Mem Mv Profiling Information (In Clk Cycles)\n";
 #endif
@@ -204,10 +207,6 @@ void generateProfileReport(void)
 	strLen = my_itoa(stdMemSet[0], strPtr, 10);
 	UART_send_n(strPtr,strLen);
 
-	UART_send_n(bytes10, bytes10Len);
-	strLen = my_itoa(stdMemSet[0], strPtr, 10);
-	UART_send_n(strPtr,strLen);
-
 	UART_send_n(bytes100, bytes100Len);
 	strLen = my_itoa(stdMemSet[1], strPtr, 10);
 	UART_send_n(strPtr,strLen);
@@ -224,10 +223,6 @@ void generateProfileReport(void)
 
 	/* my set */
 	UART_send_n(mySetTitle, mySetLen);
-	UART_send_n(bytes10, bytes10Len);
-	strLen = my_itoa(myMemSet[0], strPtr, 10);
-	UART_send_n(strPtr,strLen);
-
 	UART_send_n(bytes10, bytes10Len);
 	strLen = my_itoa(myMemSet[0], strPtr, 10);
 	UART_send_n(strPtr,strLen);
@@ -276,10 +271,6 @@ void generateProfileReport(void)
 	strLen = my_itoa(stdMemMv[0], strPtr, 10);
 	UART_send_n(strPtr,strLen);
 
-	UART_send_n(bytes10, bytes10Len);
-	strLen = my_itoa(stdMemMv[0], strPtr, 10);
-	UART_send_n(strPtr,strLen);
-
 	UART_send_n(bytes100, bytes100Len);
 	strLen = my_itoa(stdMemMv[1], strPtr, 10);
 	UART_send_n(strPtr,strLen);
@@ -300,10 +291,6 @@ void generateProfileReport(void)
 	strLen = my_itoa(myMemMv[0], strPtr, 10);
 	UART_send_n(strPtr,strLen);
 
-	UART_send_n(bytes10, bytes10Len);
-	strLen = my_itoa(myMemMv[0], strPtr, 10);
-	UART_send_n(strPtr,strLen);
-
 	UART_send_n(bytes100, bytes100Len);
 	strLen = my_itoa(myMemMv[1], strPtr, 10);
 	UART_send_n(strPtr,strLen);
@@ -320,10 +307,6 @@ void generateProfileReport(void)
 
 	/* my dma move */
 	UART_send_n(myMvDMATitle, myMvDMALen);
-	UART_send_n(bytes10, bytes10Len);
-	strLen = my_itoa(myDMAMemMv[0], strPtr, 10);
-	UART_send_n(strPtr,strLen);
-
 	UART_send_n(bytes10, bytes10Len);
 	strLen = my_itoa(myDMAMemMv[0], strPtr, 10);
 	UART_send_n(strPtr,strLen);
