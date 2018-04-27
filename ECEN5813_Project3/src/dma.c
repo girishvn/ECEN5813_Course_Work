@@ -14,6 +14,8 @@
 #include "MKL25Z4.h"
 #include "timer.h"
 
+uint8_t dmaTransfer;
+
 uint8_t dmaInit(uint8_t * src, uint8_t * dst, size_t length, uint8_t size, uint8_t srcInc)
 {
 	/* error and exception checking */

@@ -29,7 +29,7 @@
 //uint32_t dmaStart = 0; /* test values, unsused */
 //uint32_t dmaEnd = 0;
 
-uint8_t dmaTransfer = 0x00; /* global val to show if transfer is done*/
+extern uint8_t dmaTransfer; /* global val to show if transfer is done*/
 
 /**
  * @brief Initializes DMA peripheral module

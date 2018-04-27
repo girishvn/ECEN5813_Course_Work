@@ -36,7 +36,9 @@ void memProfiler(void);
  *
  * @return VOID
  */
+ #ifdef KL25ZUSE
 void stackUsageProfiler(void);
+#endif
 
 /*
  * @brief Prints out profiling report

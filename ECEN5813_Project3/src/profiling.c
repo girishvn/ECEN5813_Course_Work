@@ -37,9 +37,8 @@ uint32_t myMemMv[4] = {0, 0, 0, 0};
 uint32_t myDMAMemSet[4] = {0, 0, 0, 0};
 uint32_t myDMAMemMv[4] = {0, 0, 0, 0};
 /*uint32_t dmaInitTime = 0;*/ /*for test to check init time overhead for dma */
-#endif
-
 uint32_t stackUsage = 0;
+#endif
 
 void memProfiler(void)
 {
@@ -114,28 +113,33 @@ void memProfiler(void)
 
 	free(src); /* free src space on stack */
 
-	//stackUsageProfiler(); /* in progress function */
+#ifdef KL25ZUSE
+	stackUsageProfiler(); /* in progress function */
+#endif
 
 	generateProfileReport();
 	return;
 }
 
+#ifdef KL25ZUSE
 void stackUsageProfiler(void) /* needs to be finished girish */
 {
-	//uint32_t stackTestVal = 0x4D656D65; /* write "Meme" onto stack */
-	//uint32_t stackTop = (0x1FFFF000 + 0x00004000);
-	//uint32_t * val = (uint32_t *)stackTop; /* top of stack */
-
-	//while(*val != stackTestVal)
-	//{
-	//	val++; /* iterate to the next block on the stack */
-	//}
-
-	//stackUsage = stackTop - (uint32_t)val;
+	uint32_t stackTestVal = 0x4D656D65; /* write "Meme" onto stack */
+	//uint32_t testVal = (uint32_t)(&stackTestVal); /* test val to check address of test val on stack */
+	uint32_t stackLimit = 0x20002C00;
+	uint32_t * val = (uint32_t *)stackLimit; /* top of stack */
 
 	/* search stack */
+	while(*val != stackTestVal)
+	{
+		val++; /* iterate to the next block on the stack */
+	}
+
+	stackUsage = (uint32_t)val - stackLimit;
+
 	return;
 }
+#endif
 
 void generateProfileReport(void)
 {
@@ -334,6 +338,15 @@ void generateProfileReport(void)
 
 	UART_send_n(bytes5000, bytes5000Len);
 	strLen = my_itoa(myDMAMemMv[3], strPtr, 10);
+	UART_send_n(strPtr,strLen);
+	UART_send_n(lineEnd, lineEndLen);
+	UART_send_n(lineEnd, lineEndLen);
+
+	/* stack profiling */
+	UART_send_n(stackUseTitle, stackUseTitleLen);
+
+	UART_send_n(stackUse, stackUseLen);
+	strLen = my_itoa(stackUsage, strPtr, 10);
 	UART_send_n(strPtr,strLen);
 	UART_send_n(lineEnd, lineEndLen);
 	UART_send_n(lineEnd, lineEndLen);
