@@ -17,7 +17,7 @@
 #include "dma.h"
 #endif
 
-#ifdef BBBUSE
+#if defined(BBBUSE) || defined(HOSTUSE)
 #include <time.h>
 #endif
 
@@ -39,7 +39,7 @@ uint32_t getStartTime(void)
 	return SysTick->VAL;
 #endif
 
-#ifdef BBBUSE
+#if defined(BBBUSE) || defined(HOSTUSE)
 		clock_t timeVal; /* start time */
 		timeVal = clock(); /* use clock function from time.h on linux machines */
 		return (uint32_t)timeVal;
@@ -53,7 +53,7 @@ uint32_t getEndTime(void)
 	return SysTick->VAL; /* grab current val of sys tick */
 #endif
 
-#ifdef BBBUSE
+#if defined(BBBUSE) || defined(HOSTUSE)
 	clock_t timeVal; /* start time */
 	timeVal = clock(); /* use clock function from time.h on linux machines */
 	return (uint32_t)timeVal;
@@ -75,10 +75,8 @@ uint32_t getTimeElapsed(uint32_t start, uint32_t end)
 	return (start - end);
 #endif
 
-#ifdef BBBUSE
+#if defined(BBBUSE) || defined(HOSTUSE)
 	return (end - start);
 #endif
 	return 0;
 }
-
-

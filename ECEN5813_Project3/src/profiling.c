@@ -24,14 +24,33 @@
 #include "conversion.h"
 #endif
 
+/*
+ * @brief Variable to hold profiled time data
+ *
+ * Used to store values in profile function, and printed in report function
+ */
+uint32_t stdMemSet[4] = {0, 0, 0, 0};
+uint32_t myMemSet[4] = {0, 0, 0, 0};
+uint32_t stdMemMv[4] = {0, 0, 0, 0};
+uint32_t myMemMv[4] = {0, 0, 0, 0};
+#ifdef KL25ZUSE
+uint32_t myDMAMemSet[4] = {0, 0, 0, 0};
+uint32_t myDMAMemMv[4] = {0, 0, 0, 0};
+/*uint32_t dmaInitTime = 0;*/ /*for test to check init time overhead for dma */
+#endif
+
+uint32_t stackUsage = 0;
+
 void memProfiler(void)
 {
+	#ifdef KL25Z
 	configureSysTick(); /* setup up sys tick for timing */
+	#endif
 
 	/* setup up source and destination addresses for mem transfers/sets */
 	uint8_t * src;
 	src = (uint8_t *)malloc(10000*sizeof(uint8_t)); /* allocate array for memory transfers on heap */
-	uint8_t * dst = src + (5500); /* set the dst address 5000 off src */
+	uint8_t * dst = src + (5000); /* set the dst address 5000 off src */
 
 	/* local variables for various byte transfer sizes and for timing */
 	size_t byteNum[4] = {10, 100, 1000, 5000}; /* various mem transfer/set sizes */
@@ -103,16 +122,16 @@ void memProfiler(void)
 
 void stackUsageProfiler(void) /* needs to be finished girish */
 {
-	uint32_t stackTestVal = 0x4D656D65; /* write "Meme" onto stack */
-	uint32_t stackTop = (0x1FFFF000 + 0x00004000);
-	uint32_t * val = (uint32_t *)stackTop; /* top of stack */
+	//uint32_t stackTestVal = 0x4D656D65; /* write "Meme" onto stack */
+	//uint32_t stackTop = (0x1FFFF000 + 0x00004000);
+	//uint32_t * val = (uint32_t *)stackTop; /* top of stack */
 
-	while(*val != stackTestVal)
-	{
-		val++; /* iterate to the next block on the stack */
-	}
+	//while(*val != stackTestVal)
+	//{
+	//	val++; /* iterate to the next block on the stack */
+	//}
 
-	stackUsage = stackTop - (uint32_t)val;
+	//stackUsage = stackTop - (uint32_t)val;
 
 	/* search stack */
 	return;
@@ -120,6 +139,45 @@ void stackUsageProfiler(void) /* needs to be finished girish */
 
 void generateProfileReport(void)
 {
+
+	/*
+	 * @brief Strings to print
+	 *
+	 * Various strings printed in profiling report
+	 */
+#ifdef KL25ZUSE
+	uint8_t titleLen = 17;
+	uint8_t setTitleLen = 30;
+	uint8_t stdSetLen = 50;
+	uint8_t mySetLen = 49;
+	uint8_t mySetDMALen = 50;
+	uint8_t mvTitleLen = 31;
+	uint8_t stdMvLen = 49;
+	uint8_t myMvLen = 48;
+	uint8_t myMvDMALen = 50;
+	uint8_t bytes10Len = 10;
+	uint8_t bytes100Len = 14;
+	uint8_t bytes1000Len = 15;
+	uint8_t bytes5000Len = 15;
+	uint8_t lineEndLen = 1;
+
+	uint8_t mySetDMATitle[] = "DMA Mem Set Profiling Information (In Clk Cycles)\n";
+	uint8_t myMvDMATitle[] = "DMA Mem Mv Profiling Information (In Clk Cycles)\n";
+#endif
+
+	uint8_t title[] = "PROFILING REPORT\n";
+	uint8_t setTitle[] = "MEM SET PROFILING INFORMATION\n";
+	uint8_t stdSetTitle[] = "Std Mem Set Profiling Information (In Clk Cycles)\n";
+	uint8_t mySetTitle[] = "My Mem Set Profiling Information (In Clk Cycles)\n";
+	uint8_t mvTitle[] = "MEM MOVE PROFILING INFORMATION\n";
+	uint8_t stdMvTitle[] = "Std Mem Mv Profiling Information (In Clk Cycles)\n";
+	uint8_t myMvTitle[] = "My Mem Mv Profiling Information (In Clk Cycles)\n";
+	uint8_t bytes10[] = "10 Bytes: ";
+	uint8_t bytes100[] = " | 100 Bytes: ";
+	uint8_t bytes1000[] = " | 1000 Bytes: ";
+	uint8_t bytes5000[] = " | 5000 Bytes: ";
+	uint8_t lineEnd[] = "\n";
+
 #ifdef KL25ZUSE
 	/* uart set up */
 	__enable_irq(); /* Enable global interrupts */
@@ -282,7 +340,11 @@ void generateProfileReport(void)
 
 #endif
 
-#ifdef BBBUSE
+#if defined(BBBUSE) || defined(HOSTUSE)
+
+	PRINTF("%s",title);
+	PRINTF("%s",lineEnd);
+
 	PRINTF("%s",setTitle);
 	PRINTF("%s",lineEnd);
 

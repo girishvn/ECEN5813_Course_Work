@@ -40,13 +40,12 @@
 # Generates object output of a c-implementation file
 # Generates .o files
 #
-#
 
 #Additional makefile with a list of all source code files
 include sources.mk
 
 #data processing file
-TARGET = project2
+TARGET = project3
 GENFLAGS = -Wall -Werror -g -O0 -std=c99
 
 #Various platforms to build for: KL25Z, BBB, HOST (default)
@@ -60,6 +59,9 @@ FPABI = soft
 ARCHFLAGS = -mcpu=$(CPU) -mthumb -march=$(ARCH) -mfloat-abi=$(FPABI) -mfpu=fpv4-sp-d16 --specs=nosys.specs
 
 LINKERFILE = ../platform/MKL25Z128xxx4_flash.ld
+
+TARGETUSE = -DKL25ZUSE
+CMNDLNBLD = -DKL25ZCMNDLNBLD
 COMPILER = arm-none-eabi-gcc
 INCLUDES = -I../include/CMSIS -I../include/kl25z -I../platform
 LDFLAGS = -T$(LINKERFILE)
@@ -67,6 +69,8 @@ LDFLAGS = -T$(LINKERFILE)
 #For Beagle Bone Black
 else ifeq ($(PLATFORM),BBB)
 
+TARGETUSE = -DBBBUSE
+CMNDLNBLD = -DBBBCMNDLNBLD
 VERBOSEOUT = -DVERBOSE
 COMPILER = arm-linux-gnueabi-gcc
 INCLUDES = -I../include/CMSIS
@@ -76,10 +80,11 @@ LDFLAGS = -static
 else
 
 #Platform Specific Flags
-HOSTUSE = -DHOSTUSE
+TARGETUSE = -DHOSTUSE
+CMNDLNBLD = -DHOSTCMNDLNBLD
 VERBOSEOUT = -DVERBOSE
 COMPILER = gcc
-INCLUDES = -I../include/CMSIS -I../include/kl25z -I../platform
+#INCLUDES = -I../include/CMSIS -I../include/kl25z -I../platform
 
 endif
 
@@ -87,7 +92,7 @@ endif
 INCLUDES +=-I../include/common
 CC = $(COMPILER)
 CFLAGS = $(INCLUDES) $(GENFLAGS) $(ARCHFLAGS)
-CPPFLAGS = -DPROJECT2 $(VERBOSEOUT) $(HOSTUSE) $(INCLUDES)
+CPPFLAGS = -DPROJECT3 $(VERBOSEOUT) $(TARGETUSE) $(CMNDLNBLD) $(INCLUDES)
 LDFLAGS += -Wl,-Map=$(TARGET).map
 
 #Generate object variable from implementation .c and .S files
