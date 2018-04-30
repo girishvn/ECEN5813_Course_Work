@@ -9,13 +9,14 @@
 void SPI_init(){
 	/*Configure GPIO for SPI0 Settings*/
 	GPIO_nrf_init();
+
 	/*Configure SPI Settings*/
 	SIM->SCGC4 |= SIM_SCGC4_SPI0_MASK;
 	SIM->SOPT2 |= SIM_SOPT2_PLLFLLSEL_MASK; /*Set clock source to be from PLL*/
 	SPI0->C1 |= SPI_C1_SPE(1); /*SPI system enabled*/
 	SPI0->C1 |= SPI_C1_MSTR(1);/*SPI module configured as a master SPI device*/
-//	SPI0->C1 &= ~SPI_C1_CPHA(1);
-	SPI0->C2 |= SPI_C2_MODFEN(1); //sets bit 4, MODFEN =1 SS acts as a slave select output
+	SPI0->C1 &= ~SPI_C1_CPHA(1); /*First edge on SPSCK occurs at the middle of the first cycle of a data transfer*/
+	SPI0->C2 |= SPI_C2_MODFEN(1); /*Mode fault function enabled, master SS pin acts as the mode fault input or the slave select output*/
 
 	/*Set SPICLK to 6Mhz*/
 	SPI0->BR |= SPI_BR_SPR(0x01); /*Set SPI BAUD Rate divisor to 4*/
@@ -30,7 +31,7 @@ uint8_t SPI_read_byte(){
 void SPI_write_byte(uint8_t byte){
 	SPI_flush(); /*Wait for SPI Data Register to be Empty*/
 	SPI0->D = byte; /*Assign SPI Data register to Data Variable */
-	for(int i = 0; i < 300; i ++); /*WHYYYYYYY?????*/
+	for(int i = 0; i < 1000; i ++); /*WHYYYYYYY?????*/
 }
 void SPI_send_packet(uint8_t* p, size_t length){
 	size_t i;
@@ -38,7 +39,7 @@ void SPI_send_packet(uint8_t* p, size_t length){
 		SPI_flush(); /*Wait for SPI Data Register to be Empty*/
 		SPI0->D = *(p+i); /*Assign SPI Data register to byte*/
 	}
-	for(int i = 0; i < 300; i ++); /*WHYYYYYYY?????*/
+	for(int i = 0; i < 1000; i ++); /*WHYYYYYYY?????*/
 }
 __attribute__((always_inline)) inline void SPI_flush(){
 	while (!(SPI0->S && 0x20)); /*Wait for SPI Data Register to be Empty*/

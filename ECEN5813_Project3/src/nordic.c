@@ -22,7 +22,7 @@ uint8_t nrf_read_register(uint8_t reg_address){
 	status = SPI_read_byte();  /* Status register bytes are shifted out when a command is transmitted */
 	SPI_write_byte(NRF_NOP);  /* Write NOP in order to shift out data in the specified register */
 	data = SPI_read_byte();  /* Returns data of the specified register */
-	data = SPI_read_byte();
+
 	NRF_CHIP_DISABLE;
 
 	return data;
@@ -67,7 +67,7 @@ void nrf_write_config(uint8_t config){
 	uint8_t cmd = 0;
 	uint8_t status = 0;
 	uint8_t garbage =0;
-	byte = NRF_WRITE_CMD | NRF_CONFIG_REG;
+	cmd = NRF_WRITE_CMD | NRF_CONFIG_REG;
 
 	/*Begin Writing the NRF Register*/
 	NRF_CHIP_ENABLE;
@@ -95,6 +95,7 @@ uint8_t nrf_read_config(){
 	status = SPI_read_byte();  /* Status register bytes are shifted out when a command is transmitted */
 	SPI_write_byte(NRF_NOP);  /* Write NOP in order to shift out data in the config register */
 	data = SPI_read_byte();  /* Return data of the configuration register*/
+
 	NRF_CHIP_DISABLE;
 
 	return data;
@@ -113,7 +114,6 @@ uint8_t nrf_read_rf_setup(){
 	SPI_write_byte(cmd); /*Send write register command to NRF*/
 	status = SPI_read_byte();  /* Status register bytes are shifted out when a command is transmitted */
 	SPI_write_byte(NRF_NOP);  /* Write NOP in order to shift out data in the specified register */
-	data = SPI_read_byte();  /* Return data of the configuration register */
 	data = SPI_read_byte();  /* Return data of the configuration register */
 
 	NRF_CHIP_DISABLE;
@@ -153,7 +153,6 @@ uint8_t nrf_read_rf_ch(){
 	SPI_write_byte(cmd); /*Send write register command to NRF*/
 	status = SPI_read_byte(); /* Status register bytes are shifted out when a command is transmitted */
 	SPI_write_byte(NRF_NOP);  /* Write NOP in order to shift out data in the specified register */
-	data = SPI_read_byte();  /* Return data of the rf_ch register */
 	data = SPI_read_byte();  /* Return data of the rf_ch register */
 
 	NRF_CHIP_DISABLE;
@@ -196,7 +195,6 @@ void nrf_read_TX_ADDR(uint8_t * address){
 	{
 		SPI_write_byte(NRF_NOP);  /* Write NOP in order to shift out data in the specified register */
 		*(address+i) = SPI_read_byte();  /* Read a single byte of the tx_address register and store it in the address array*/
-		*(address+i) = SPI_read_byte();  /* Read a single byte of the tx_address register and store it in the address array*/
 		read_array[i] = *(address+i);
 	}
 
@@ -238,7 +236,6 @@ uint8_t nrf_read_fifo_status(){
 	SPI_write_byte(cmd); /*Send write register command to NRF*/
 	status = SPI_read_byte();  /* Status register bytes are shifted out when a command is transmitted */
 	SPI_write_byte(NRF_NOP);  /* Write NOP in order to shift out data in the specified register */
-	data = SPI_read_byte();  /* Returns the data of the fifo status register */
 	data = SPI_read_byte();  /* Returns the data of the fifo status register */
 
 	NRF_CHIP_DISABLE;
