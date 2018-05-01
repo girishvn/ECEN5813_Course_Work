@@ -65,7 +65,7 @@ void SPI_send_packet(uint8_t* p, size_t length);
  *
  * @return void
  */
-__attribute__((always_inline)) inline void SPI_flush();
+void SPI_flush(void);
 
 
 #endif /* SOURCE_SPI_H_ */

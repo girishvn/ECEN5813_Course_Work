@@ -26,8 +26,10 @@ ifeq ($(PLATFORM),KL25Z)
 SOURCES += arch_arm32.c \
 	dma.c \
 	GPIO.c \
-	system_MKL25Z4.c \
+	nordic.c \
+	SPI.c \
 	startup_MKL25Z4.S \
+	system_MKL25Z4.c \
 	uart.c
 endif
 

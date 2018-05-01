@@ -76,6 +76,8 @@ COMPILER = arm-linux-gnueabi-gcc
 INCLUDES = -I../include/CMSIS
 LDFLAGS = -static
 
+STACKUSAGE = -fstack-usage
+
 #For host platform (linux computer), default case
 else
 
@@ -91,7 +93,7 @@ endif
 #Compile Defines
 INCLUDES +=-I../include/common
 CC = $(COMPILER)
-CFLAGS = $(INCLUDES) $(GENFLAGS) $(ARCHFLAGS)
+CFLAGS = $(INCLUDES) $(GENFLAGS) $(ARCHFLAGS) $(STACKUSAGE)
 CPPFLAGS = -DPROJECT3 $(VERBOSEOUT) $(TARGETUSE) $(CMNDLNBLD) $(INCLUDES)
 LDFLAGS += -Wl,-Map=$(TARGET).map
 
@@ -135,4 +137,4 @@ $(TARGET).elf: $(OBJS)
 
 .PHONY: clean
 clean:
-	rm -f *.o *.i *.elf *.asm *.map *.d *.hex
+	rm -f *.o *.i *.elf *.asm *.map *.d *.hex *.su
