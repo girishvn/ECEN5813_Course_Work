@@ -46,7 +46,7 @@ include sources.mk
 
 #data processing file
 TARGET = project3
-GENFLAGS = -Wall -Werror -g -O0 -std=c99
+GENFLAGS = -Wall -Werror -g -O3 -std=c99
 
 #Various platforms to build for: KL25Z, BBB, HOST (default)
 #For KL25Z mcu
