@@ -12,6 +12,8 @@
 
 #include "circbuf.h"
 
+CB_t ** CB; /* declaration of circbuf struct */
+
 CB_e CB_init(CB_t ** CB, size_t size)
 {
     /* Error checking */

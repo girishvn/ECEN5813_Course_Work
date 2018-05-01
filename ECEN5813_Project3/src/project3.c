@@ -16,9 +16,22 @@
 
 #include "project3.h"
 #include "profiling.h"
+#include "circbuf.h"
+
+#ifdef KL25ZUSE
+#include "nordic.h"
+#include "dma.h"
+#endif
+
 
 uint8_t project3(void)
 {
+	CB = (CB_t **)malloc(sizeof(CB_t *)); /* to keep hard fault handler from crashing program */
+	CB_init(CB, 32); /* init buffer */
+
+#ifdef KL25ZUSE
+	if(nrf_SPI_test() != 0) return -1; /* test spi comm with nordic chip */
+#endif
 
 	memProfiler(); /* profile for memory array */
 

@@ -70,18 +70,18 @@ uint8_t * memmove_dma(uint8_t * src, uint8_t * dst, size_t length, uint8_t size)
 		DMA0->DMA[0].DCR |= DMA_DCR_START(0x01); /* start data transfer */
 	}
 
-	else if(dst > src)
+	else if(dst > src) /* overlap condition is most likely significantly slower than std mem move */
 	{
 		if(src + length > dst) /* overlap case */ /* still need to finish this Girish */
 		{
-			dmaInit(src + (length - (dst - src)), src + length, (dst - src), size, INCREMENT); /* transfered to non-overlapped portion of dst */
-			DMA0->DMA[0].DCR |= DMA_DCR_START(0x01); /* start data transfer */
-
-			while(dmaTransfer); /* wait for first transfer to complete */
-
-			dmaInit(src, dst, (dst - src), size, INCREMENT);
-			dmaTransfer = 0x01; /* dma busy */
-			DMA0->DMA[0].DCR |= DMA_DCR_START(0x01); /* start data transfer */
+			size_t i;
+			for(i = 0; i < length; i++)
+			{
+				dmaInit(src + length - i - 1, dst + length - i - 1, 0x01, size, INCREMENT);
+				dmaTransfer = 0x01; /* dma busy */
+				DMA0->DMA[0].DCR |= DMA_DCR_START(0x01); /* start data transfer */
+				while(dmaTransfer); /* wait for transfer to finish */
+			}
 		}
 
 		else /* non over lap case */
@@ -102,9 +102,7 @@ uint8_t * memset_dma(uint8_t * mem, size_t length, uint8_t value)
 	if(length > DMAMAXBYTENUM) return NULL; /* data transfer too large */
 
 	/* dma transfer init and start */
-	/* dmaStart = SysTick->VAL; */ /* val for calculating overhead time */
 	dmaInit(&value, mem, length, DMASIZE8, NONINCREMENT); /* dma init */
-	/*dmaEnd = SysTick->VAL; */ /* val for calculating overhead time */
 	dmaTransfer = 0x01; /* dma busy */
 	DMA0->DMA[0].DCR |= DMA_DCR_START(0x01); /* start data transfer */
 

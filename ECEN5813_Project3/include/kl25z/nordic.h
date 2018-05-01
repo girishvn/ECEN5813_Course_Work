@@ -184,7 +184,6 @@ uint8_t nrf_read_fifo_status();
  */
 void nrf_flush_tx_fifo();
 
-//sends the command flush RX to the nordic chip
 /**
  * @Sends the command flush RX to the nordic chip
  *
@@ -195,6 +194,15 @@ void nrf_flush_tx_fifo();
  * @return void
  */
 void nrf_flush_rx_fifo();
+
+/**
+ * @brief shows functionality of all nrf functions
+ *
+ * @param void
+ *
+ * @return 0 if succesful, -1 if error
+ */
+uint8_t nrf_SPI_test(void);
 
 
 #endif /* SOURCE_NORDIC_H_ */

@@ -4,10 +4,15 @@
  *  Created on: Apr 7, 2018
  *      Author: karroshuang
  */
+
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#endif
+
 #include "nordic.h"
 
-
-uint8_t nrf_read_register(uint8_t reg_address){
+uint8_t nrf_read_register(uint8_t reg_address)
+{
 	/*Initializing and Setting up Parameters to Read NRF Register*/
 	uint8_t cmd = 0;
 	uint8_t status = 0;
@@ -28,7 +33,8 @@ uint8_t nrf_read_register(uint8_t reg_address){
 	return data;
 }
 
-void nrf_write_register(uint8_t reg_address, uint8_t value){
+void nrf_write_register(uint8_t reg_address, uint8_t value)
+{
 	/*Initializing and Setting up Parameters to Read NRF Register*/
 	uint8_t cmd = 0;
 	uint8_t status = 0;
@@ -47,7 +53,8 @@ void nrf_write_register(uint8_t reg_address, uint8_t value){
 	NRF_CHIP_DISABLE;
 }
 
-uint8_t nrf_read_status(){
+uint8_t nrf_read_status()
+{
 	/*Initializing and Setting up Parameters to Read NRF Register*/
 	uint8_t status = 0;
 
@@ -62,7 +69,8 @@ uint8_t nrf_read_status(){
 	return status;
 }
 
-void nrf_write_config(uint8_t config){
+void nrf_write_config(uint8_t config)
+{
 	/*Initializing and Setting up Parameters to Read NRF Register*/
 	uint8_t cmd = 0;
 	uint8_t status = 0;
@@ -81,7 +89,8 @@ void nrf_write_config(uint8_t config){
 
 }
 
-uint8_t nrf_read_config(){
+uint8_t nrf_read_config()
+{
 	/*Initializing and Setting up Parameters to Read NRF Register*/
 	uint8_t cmd = 0;
 	uint8_t status = 0;
@@ -101,7 +110,8 @@ uint8_t nrf_read_config(){
 	return data;
 }
 
-uint8_t nrf_read_rf_setup(){
+uint8_t nrf_read_rf_setup()
+{
 	/*Initializing and Setting up Parameters to Read NRF Register*/
 	uint8_t cmd = 0;
 	uint8_t status = 0;
@@ -121,7 +131,8 @@ uint8_t nrf_read_rf_setup(){
 	return data;
 }
 
-void nrf_write_rf_setup(uint8_t config){
+void nrf_write_rf_setup(uint8_t config)
+{
 	/*Initializing and Setting up Parameters to Read NRF Register*/
 	uint8_t cmd = 0;
 	uint8_t status = 0;
@@ -139,7 +150,8 @@ void nrf_write_rf_setup(uint8_t config){
 	NRF_CHIP_DISABLE;
 }
 
-uint8_t nrf_read_rf_ch(){
+uint8_t nrf_read_rf_ch()
+{
 	/*Initializing and Setting up Parameters to Read NRF Register*/
 	uint8_t cmd = 0;
 	uint8_t status = 0;
@@ -160,7 +172,8 @@ uint8_t nrf_read_rf_ch(){
 	return data;
 }
 
-void nrf_write_rf_ch(uint8_t channel){
+void nrf_write_rf_ch(uint8_t channel)
+{
 	/*Initializing and Setting up Parameters to Read NRF Register*/
 	uint8_t cmd = 0;
 	uint8_t status = 0;
@@ -178,7 +191,8 @@ void nrf_write_rf_ch(uint8_t channel){
 	NRF_CHIP_DISABLE;
 }
 
-void nrf_read_TX_ADDR(uint8_t * address){
+void nrf_read_TX_ADDR(uint8_t * address)
+{
 	/*Initializing and Setting up Parameters to Read NRF Register*/
 	uint8_t read_array[5] = {0};
 	uint8_t cmd = 0;
@@ -201,7 +215,8 @@ void nrf_read_TX_ADDR(uint8_t * address){
 	NRF_CHIP_DISABLE;
 }
 
-void nrf_write_TX_ADDR(uint8_t * tx_addr){
+void nrf_write_TX_ADDR(uint8_t * tx_addr)
+{
 	/*Initializing and Setting up Parameters to Read TX_ADDR Register*/
 	uint8_t cmd = 0;
 	uint8_t status = 0;
@@ -223,7 +238,8 @@ void nrf_write_TX_ADDR(uint8_t * tx_addr){
 	NRF_CHIP_DISABLE;
 }
 
-uint8_t nrf_read_fifo_status(){
+uint8_t nrf_read_fifo_status()
+{
 	/*Initializing and Setting up Parameters to Read fifo status Register*/
 	uint8_t cmd =0;
 	uint8_t status = 0;
@@ -268,4 +284,49 @@ void nrf_flush_rx_fifo(){
 	status = SPI_read_byte();  /* Status register bytes are shifted out when a command is transmitted */
 
 	NRF_CHIP_DISABLE;
+}
+
+uint8_t nrf_SPI_test(void)
+{
+
+	SPI_init(); /* init spi */
+
+	uint8_t readRegData = 0;
+	uint8_t writeRegData = 0x7A; /* test val to write */
+	uint8_t TXData[5] = {0xDE, 0xAD, 0xBE, 0xEF, 0x11};
+	uint8_t* TXDataptr = TXData;
+	uint8_t TXDataReceive[5];
+	uint8_t* TXDataReceiveptr = TXDataReceive;
+
+	/* general reg read/write access test */
+	//nrf_write_register(NRF_CONFIG_REG, writeRegData);
+	//readRegData = nrf_read_register(NRF_CONFIG_REG);
+	//if(readRegData != writeRegData) return -1;
+
+	/* config reg read/write access */
+	nrf_write_config(writeRegData);
+	readRegData = nrf_read_config();
+	if(readRegData != writeRegData) return -1;
+
+	/* setup reg read/write access */
+	nrf_write_rf_setup(writeRegData);
+	readRegData = nrf_read_rf_setup();
+	if(readRegData != writeRegData) return -1;
+
+	/* ch reg read/write access */
+	nrf_write_rf_ch(writeRegData);
+	readRegData = nrf_read_rf_ch();
+	if(readRegData != writeRegData) return -1;
+
+	/* TX Address write/read access */
+	nrf_write_TX_ADDR(TXDataptr);
+	nrf_read_TX_ADDR(TXDataReceiveptr);
+
+	int i;
+	for(i = 0; i < 5; i++)
+	{
+		if(TXDataReceive[i] != TXData[i]) return -1;
+	}
+
+	return 0; /* if all tests pass, return 0 */
 }

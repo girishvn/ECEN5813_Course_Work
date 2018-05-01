@@ -25,10 +25,6 @@
 #define INCREMENT 0x01
 #define NONINCREMENT 0x00
 
-/* times for systick profilings */
-//uint32_t dmaStart = 0; /* test values, unsused */
-//uint32_t dmaEnd = 0;
-
 extern uint8_t dmaTransfer; /* global val to show if transfer is done*/
 
 /**

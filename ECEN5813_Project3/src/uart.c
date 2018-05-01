@@ -14,7 +14,7 @@
 
 void UART_configure()
 {
-	//NVIC_EnableIRQ(UART0_IRQn); /*enable UART0 interrupts*/ //GIRISH WHYYY????
+	NVIC_EnableIRQ(UART0_IRQn); /*enable UART0 interrupts*/ //GIRISH WHYYY????
 	UART0->C2 &= ~(0xB<<2); /*Disable Transmitter and Receiver & Receiver Interrupt*/
 
 	/*Set UART0 RX & TX to PTA1 & PTA2 Respectively*/
