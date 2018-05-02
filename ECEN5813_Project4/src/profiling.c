@@ -45,8 +45,8 @@ uint32_t stackUsage = 0;
 void memProfiler(void)
 {
 #ifdef LOGGING
-	uint8_t startProf[] = "Profiling analysis has started";
-	LOG_EVENT(PROFILING_STARTED, PROFILING, startProf, 30, CB); /* system info */
+	uint8_t startProf[] = "Profiling_analysis_has_started";
+	LOG_EVENT(PROFILING_STARTED, PROFILING, (uint8_t *)startProf, 30, CB); /* system info */
 #endif
 
 	#ifdef KL25ZUSE
@@ -55,9 +55,9 @@ void memProfiler(void)
 
 	/* setup up source and destination addresses for mem transfers/sets */
 	/* make src > dst to avoid over lap condition */
-	uint8_t * dst;
-	dst = (uint8_t *)malloc(6000*sizeof(uint8_t)); /* allocate array for memory transfers on heap */
-	uint8_t * src = dst + (1000); /* set the dst address 5000 off src */
+	uint8_t * src;
+	src = (uint8_t *)malloc(10000*sizeof(uint8_t)); /* allocate array for memory transfers on heap */
+	uint8_t * dst = (uint8_t *)(src + 5000); /* set the dst address 5000 off src */
 
 	/* local variables for various byte transfer sizes and for timing */
 	size_t byteNum[4] = {10, 100, 1000, 5000}; /* various mem transfer/set sizes */
@@ -133,14 +133,14 @@ void memProfiler(void)
 		LOG_EVENT(PROFILING_RESULT, PROF_DMASET, strPtr, strLen, CB); /* my set log */
 #endif
 
-		strLen = my_itoa(stdMemSet[i], strPtr, 10);
+		strLen = my_itoa(stdMemMv[i], strPtr, 10);
 		LOG_EVENT(PROFILING_RESULT, PROF_STDMV, strPtr, strLen, CB); /* std set log */
 
-		strLen = my_itoa(myMemSet[i], strPtr, 10);
+		strLen = my_itoa(myMemMv[i], strPtr, 10);
 		LOG_EVENT(PROFILING_RESULT, PROF_MYMV, strPtr, strLen, CB); /* my set log */
 
 #ifdef KL25ZUSE
-		strLen = my_itoa(myDMAMemSet[i], strPtr, 10);
+		strLen = my_itoa(myDMAMemMv[i], strPtr, 10);
 		LOG_EVENT(PROFILING_RESULT, PROF_DMAMV, strPtr, strLen, CB); /* my set log */
 #endif
 
@@ -159,7 +159,7 @@ void memProfiler(void)
 
 
 #ifdef LOGGING
-	uint8_t endProf[] = "Profiling analysis has completed";
+	uint8_t endProf[] = "Profiling_analysis_has_completed";
 	LOG_EVENT(PROFILING_COMPLETED, PROFILING, endProf, 32, CB); /* system info */
 #endif
 	return;

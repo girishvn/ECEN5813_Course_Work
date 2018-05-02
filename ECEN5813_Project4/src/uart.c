@@ -11,6 +11,8 @@
 #include "uart.h"
 #include "MKL25Z4.h"
 #include "circbuf.h"
+#include "logger.h"
+#include "logger_queue.h"
 
 void UART_configure()
 {
@@ -79,7 +81,12 @@ void UART0_IRQHandler()
 {
 	if(UART0->S1 & UART_S1_RDRF_MASK)
 	{
-		CB_buffer_add_item(CB,UART0->D); /*Store UART Buffer Data into buffer */
+		uint8_t data = UART0->D;
+		if(data != 0x00)
+		{
+			CB_buffer_add_item(CB,data); /*Store UART Buffer Data into buffer */
+			LOG_EVENT(DATA_RECEIVED, UART, &data, 0x01, CB); /* log recieved data */
+		}
 	}
 	PORTA->ISFR = 0xFFFF; /*Clear the interrupt Flag*/
 }

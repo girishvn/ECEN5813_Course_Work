@@ -15,6 +15,20 @@
 
 #include <stdint.h>
 
+
+void printdataHost(void);
+
+void printData(void);
+
+void processData(void);
+
+#if defined(BBBUSE) || defined(HOSTUSE)
+void processDataHost(uint8_t *dataPointer);
+#endif
+
+
+
+
 /*
  * @brief Runs the program flow for project 4
  *

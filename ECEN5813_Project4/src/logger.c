@@ -1,8 +1,13 @@
-/*
- * logger.c
+/**
+ * @file logger.c
+ * @brief An implementation of a logger class
  *
- *  Created on: Apr 30, 2018
- *      Author: girishnarayanswamy
+ * This implementation file defines the interface to logging data about the program
+ *
+ * @author Girish Narayanswamy
+ * @date April 15, 2018
+ * @version 2.0
+ *
  */
 
 #ifdef __GNUC__
@@ -21,6 +26,7 @@
 
 #ifdef BBBUSE
 #include "string.h"
+#include <sys/time.h>
 #endif
 
 /* BLOCKING LOGGING FUNCTIONS */
@@ -156,7 +162,7 @@ void log_data_printf(uint8_t * data, uint32_t length)
 {
 	while(length > 0)
 	{
-		printf("%c", (*data));
+		PRINTF("%c", (*data));
 		data++;
 		length--;
 	}
@@ -165,19 +171,24 @@ void log_data_printf(uint8_t * data, uint32_t length)
 
 void log_string_printf(uint8_t * string)
 {
-	printf("%s",string);
+	PRINTF("%s",string);
 	return;
 }
 
 void log_integer_printf(int32_t integer)
 {
-	printf("%d",(int) integer);
+	PRINTF("%d",(int) integer);
 	return;
 }
 
 void log_flush_printf(void)
 {
-	while(!CB_is_empty(CB)); //girish???????
+	uint8_t dataPtr;
+
+	while(LQ_buffer_remove_item(CB, &dataPtr) != CB_buff_empty_err)
+	{
+		PRINTF("%c", &data);
+	}
 }
 
 void log_item_printf(binLog_t * logItem)
@@ -207,13 +218,13 @@ void log_item_printf(binLog_t * logItem)
 /* NON-BLOCKING LOG FUNCTIONS */
 
 /* Wrapper function */
-void LOG_EVENT(binLog_e logID, uint8_t moduleID, uint8_t * payload, uint8_t payloadLen, CB_t ** LQ)
+void LOG_EVENT(binLog_e logID, fileID_e moduleID, uint8_t * payload, uint8_t payloadLen, CB_t ** LQ)
 {
 	binLog_t * item = NULL;
 	item = (binLog_t *)malloc(sizeof(binLog_t));
 
 	item->logID = (uint8_t) logID;
-	item->moduleID = moduleID;
+	item->moduleID = (uint8_t) moduleID;
 	item->timeStamp = GET_RTC_TIME(); // girish implement
 	item->logLength = payloadLen;
 	item->payload = payload;
@@ -229,37 +240,80 @@ void LOG_ITEM(binLog_t * logItem, CB_t ** LQ)
 	uint8_t * dataPtr; /* ptr to push 8 bit vals onto buffer */
 	uint8_t endOfLine = (uint8_t)'\n';
 
-	uint8_t strPtr[] = {'0','0'};
+	uint8_t strPtr[] = {'0','0'}; /* clean out string character values */
 	uint8_t strLen = 0;
 
 	strLen = my_itoa(logItem->logID, strPtr, 16); /* log logID */
-	if(!strPtr[0]) strPtr[0] = '0';
+	if(!strPtr[0]) strPtr[0] = '0'; /* set values to zero rather than null */
 	if(!strPtr[1]) strPtr[1] = '0';
-	if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
-	if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+	if(logItem->logID < 0x10)  /* to deal with edge case where LSB is in MSB spot for nums < 0x10 */
+	{
+		if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
+		if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+	}
+	else
+	{
+		if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+		if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
+	}
 
+	strPtr[0] = '0'; /* clean out string character values */
+	strPtr[1] = '0';
 
 	strLen = my_itoa(logItem->moduleID, strPtr, 16); /* log moduleID */
 	if(!strPtr[0]) strPtr[0] = '0';
 	if(!strPtr[1]) strPtr[1] = '0';
-	if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
-	if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+	if(logItem->moduleID < 0x10)
+	{
+		if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
+		if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+	}
+	else
+	{
+		if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+		if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
+	}
+
+	strPtr[0] = '0';
+	strPtr[1] = '0';
 
 	dataPtr = (uint8_t *) &logItem->timeStamp; /* log time stamp in 8 individual chars */
 	for(i = 0; i < 4; i++)
 	{
-		strLen = my_itoa(*(dataPtr + 3 - i), strPtr, 16); /* log moduleID */
+		strLen = my_itoa(*(dataPtr + 3 - i), strPtr, 16);
 		if(!strPtr[0]) strPtr[0] = '0';
 		if(!strPtr[1]) strPtr[1] = '0';
-		if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH(); /* log logID */
-		if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH(); /* log logID */
+		if(*(dataPtr + 3 - i) < 0x10)
+		{
+			if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
+			if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+		}
+		else
+		{
+			if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+			if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
+		}
 	}
 
-	strLen = my_itoa(logItem->logLength, strPtr, 16); /* log moduleID */
+	strPtr[0] = '0';
+	strPtr[1] = '0';
+
+	strLen = my_itoa(logItem->logLength, strPtr, 16); /* log length */
 	if(!strPtr[0]) strPtr[0] = '0';
 	if(!strPtr[1]) strPtr[1] = '0';
-	if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
-	if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+	if(logItem->logLength < 0x10)
+	{
+		if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
+		if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+	}
+	else
+	{
+		if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+		if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
+	}
+
+	strPtr[0] = '0';
+	strPtr[1] = '0';
 
 	dataPtr = logItem->payload; /* log pay load in x individual bytes */
 	for(i = 0; i < logItem->logLength; i++)
@@ -267,14 +321,26 @@ void LOG_ITEM(binLog_t * logItem, CB_t ** LQ)
 		if(LQ_buffer_add_item(LQ,*(dataPtr + i))) LOG_FLUSH();
 	}
 
-	dataPtr = (uint8_t *) &logItem->checkSum; /* log time stamp in 8 individual chars */
+	strPtr[0] = '0';
+	strPtr[1] = '0';
+
+	dataPtr = (uint8_t *) &logItem->checkSum; /* log check sum */
 	for(i = 0; i < 4; i++)
 	{
 		strLen = my_itoa(*(dataPtr + 3 - i), strPtr, 16); /* log moduleID */
 		if(!strPtr[0]) strPtr[0] = '0';
 		if(!strPtr[1]) strPtr[1] = '0';
-		if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH(); /* log logID */
-		if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH(); /* log logID */
+		if(*(dataPtr + 3 - i) < 0x10)
+		{
+			if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
+			if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+		}
+		else
+		{
+			if(LQ_buffer_add_item(LQ,strPtr[0])) LOG_FLUSH();
+			if(LQ_buffer_add_item(LQ,strPtr[1])) LOG_FLUSH();
+		}
+
 	}
 
 	dataPtr = &endOfLine; /* log end of line after item */
@@ -288,6 +354,7 @@ uint32_t GEN_CHECK_SUM(binLog_t * logItem)
 	uint32_t checkSum = 0x00000000;
 	uint8_t i; /* iterator variable */
 
+	/* add all values to dervive checksum */
 	checkSum += (uint32_t) logItem->logID;
 	checkSum += (uint32_t) logItem->moduleID;
 	checkSum += logItem->timeStamp;
@@ -308,6 +375,10 @@ uint32_t GET_RTC_TIME(void)
 #endif
 
 #if defined(BBBUSE) || defined(HOSTUSE)
-	return 0; /* change girish */
+	struct timeval t;
+	gettimeofday(&t,NULL);
+
+	return t.tv_sec; /* change girish */
 #endif
+	return 0;
 }

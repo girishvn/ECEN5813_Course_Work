@@ -122,7 +122,6 @@ CB_e CB_buffer_remove_item(CB_t ** CB, uint8_t * storedData);
  *
  * @return 0 if not full, 1 if full
  */
-
 int CB_is_full(CB_t ** CB);
 
 /**
@@ -134,7 +133,6 @@ int CB_is_full(CB_t ** CB);
  *
  * @return 0 if not empty, 1 if empty
  */
-
 int CB_is_empty(CB_t ** CB);
 
 /**
