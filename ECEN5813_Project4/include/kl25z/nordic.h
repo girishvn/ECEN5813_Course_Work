@@ -206,3 +206,4 @@ uint8_t nrf_SPI_test(void);
 
 
 #endif /* SOURCE_NORDIC_H_ */
+

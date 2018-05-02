@@ -11,6 +11,8 @@
  */
 
 #include "circbuf.h"
+#include "logger.h"
+#include "logger_queue.h"
 
 CB_t ** CB; /* declaration of circbuf struct */
 
@@ -19,6 +21,11 @@ CB_e CB_init(CB_t ** CB, size_t size)
     /* Error checking */
     if(CB == NULL)
     {
+#ifdef LOGGING
+	uint8_t nullPtrErr[] = "null ptr err";
+	LOG_EVENT(ERROR, CIRCBUF, nullPtrErr, 12, CB); /* error log */
+#endif
+
         return CB_null_ptr_err;
     }
 
@@ -29,12 +36,22 @@ CB_e CB_init(CB_t ** CB, size_t size)
     /* Error checking */
     if((*CB) == NULL)
     {
+#ifdef LOGGING
+	uint8_t nullPtrErr[] = "null ptr err";
+	LOG_EVENT(ERROR, CIRCBUF, nullPtrErr, 12, CB); /* error log */
+#endif
+
         return CB_null_ptr_err;
     }
 
     /* Error checking */
     if(size <= 0)
     {
+#ifdef LOGGING
+	uint8_t noLenErr[] = "no length err";
+	LOG_EVENT(ERROR, CIRCBUF, noLenErr, 12, CB); /* error log */
+#endif
+
         return CB_no_length_err;
     }
 
@@ -44,6 +61,11 @@ CB_e CB_init(CB_t ** CB, size_t size)
     /* Error checking */
     if((*CB)->CB_buff == NULL)
     {
+#ifdef LOGGING
+	uint8_t nullPtrErr[] = "null ptr err";
+	LOG_EVENT(ERROR, CIRCBUF, nullPtrErr, 12, CB); /* error log */
+#endif
+
         return CB_null_ptr_err;
     }
 
@@ -86,6 +108,7 @@ CB_e CB_destroy(CB_t ** CB)
 
 CB_e CB_buffer_add_item(CB_t ** CB, uint8_t data)
 {
+
     /* Error checking */
     if((*CB) == NULL)
     {
@@ -95,6 +118,11 @@ CB_e CB_buffer_add_item(CB_t ** CB, uint8_t data)
     if(CB_is_full(CB))
     {
         return CB_buff_full_err;
+    }
+
+    if(data == 0x00)
+    {
+    	return CB_null_ptr_err;
     }
 
     START_CRITICAL();

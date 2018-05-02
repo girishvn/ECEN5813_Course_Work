@@ -9,7 +9,12 @@
 #include "MKL25Z4.h"
 #include "rtc.h"
 
-uint32_t RTC_seconds;
+#include "circbuf.h"
+#include "stddef.h"
+#include "logger.h"
+#include "logger_queue.h"
+
+volatile uint32_t RTC_seconds;
 
 void rtc_init(){
 	NVIC_EnableIRQ(RTC_Seconds_IRQn);
@@ -49,6 +54,10 @@ void rtc_init(){
 void RTC_Seconds_IRQHandler(){
 	RGB_RED_TOGGLE(); /*Heart Beat Simulator*/
 	RTC_seconds = (uint32_t) RTC->TSR; /*Update RTC_seconds variable from register*/
+
+#ifdef LOGGING
+	LOG_EVENT(HEARTBEAT, RTCLOCK, NULL, 0x00, CB); /* system init */
+#endif
 }
 
 

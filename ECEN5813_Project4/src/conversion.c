@@ -106,7 +106,7 @@ int32_t my_atoi(uint8_t * ptr, uint8_t digits, uint32_t base)
     }
 
     /* parse through ASCII chars least sig to most sig (start one place to the left o \0) */
-    for(i = (uint8_t)(length - 1); i > 0 + sign; i --)
+    for(i = (uint8_t)(length - 1); i > 0 + sign; i--)
     {
         tmpChar  = *(ptr + i - 1); /* grab ASCII val of char digit at pointer */
 

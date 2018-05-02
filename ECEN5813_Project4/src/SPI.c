@@ -39,7 +39,7 @@ void SPI_send_packet(uint8_t* p, size_t length){
 		SPI_flush(); /*Wait for SPI Data Register to be Empty*/
 		SPI0->D = *(p+i); /*Assign SPI Data register to byte*/
 	}
-	for(int i = 0; i < 1000; i ++);
+	for(int i = 0; i < 1000; i ++); /*WHYYYYYYY?????*/
 }
 __attribute__((always_inline)) inline void SPI_flush(){
 	while (!(SPI0->S && 0x20)); /*Wait for SPI Data Register to be Empty*/

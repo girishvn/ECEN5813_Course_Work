@@ -16,6 +16,9 @@
 #include "platform.h" /* PRINTF def */
 #include <string.h> /*std mem mv and set functions */
 #include <stdlib.h>
+#include "circbuf.h"
+#include "logger.h"
+#include "logger_queue.h"
 
 #ifdef KL25ZUSE
 #include "dma.h"
@@ -41,14 +44,20 @@ uint32_t stackUsage = 0;
 
 void memProfiler(void)
 {
+#ifdef LOGGING
+	uint8_t startProf[] = "Profiling analysis has started";
+	LOG_EVENT(PROFILING_STARTED, PROFILING, startProf, 30, CB); /* system info */
+#endif
+
 	#ifdef KL25ZUSE
 	configureSysTick(); /* setup up sys tick for timing */
 	#endif
 
 	/* setup up source and destination addresses for mem transfers/sets */
-	uint8_t * src;
-	src = (uint8_t *)malloc(10000*sizeof(uint8_t)); /* allocate array for memory transfers on heap */
-	uint8_t * dst = src + (5000); /* set the dst address 5000 off src */
+	/* make src > dst to avoid over lap condition */
+	uint8_t * dst;
+	dst = (uint8_t *)malloc(6000*sizeof(uint8_t)); /* allocate array for memory transfers on heap */
+	uint8_t * src = dst + (1000); /* set the dst address 5000 off src */
 
 	/* local variables for various byte transfer sizes and for timing */
 	size_t byteNum[4] = {10, 100, 1000, 5000}; /* various mem transfer/set sizes */
@@ -108,6 +117,40 @@ void memProfiler(void)
 		myDMAMemMv[i] = (uint32_t) (myDMAMemMv[i] / 4);
 		/* dmaInitTime = dmaInitTime / 4; */
 #endif
+
+#ifdef LOGGING
+		uint8_t strPtr[12];
+		uint8_t strLen = 0;
+
+		strLen = my_itoa(stdMemSet[i], strPtr, 10);
+		UART_send_n(strPtr,strLen);
+		LOG_EVENT(PROFILING_RESULT, PROF_STDSET, strPtr, strLen, CB); /* std set log */
+
+		strLen = my_itoa(myMemSet[i], strPtr, 10);
+		UART_send_n(strPtr,strLen);
+		LOG_EVENT(PROFILING_RESULT, PROF_MYSET, strPtr, strLen, CB); /* my set log */
+
+#ifdef KL25ZUSE
+		strLen = my_itoa(myDMAMemSet[i], strPtr, 10);
+		UART_send_n(strPtr,strLen);
+		LOG_EVENT(PROFILING_RESULT, PROF_DMASET, strPtr, strLen, CB); /* my set log */
+#endif
+
+		strLen = my_itoa(stdMemSet[i], strPtr, 10);
+		UART_send_n(strPtr,strLen);
+		LOG_EVENT(PROFILING_RESULT, PROF_STDMV, strPtr, strLen, CB); /* std set log */
+
+		strLen = my_itoa(myMemSet[i], strPtr, 10);
+		UART_send_n(strPtr,strLen);
+		LOG_EVENT(PROFILING_RESULT, PROF_MYMV, strPtr, strLen, CB); /* my set log */
+
+#ifdef KL25ZUSE
+		strLen = my_itoa(myDMAMemSet[i], strPtr, 10);
+		UART_send_n(strPtr,strLen);
+		LOG_EVENT(PROFILING_RESULT, PROF_DMAMV, strPtr, strLen, CB); /* my set log */
+#endif
+
+#endif
 	}
 
 	free(src); /* free src space on stack */
@@ -116,7 +159,15 @@ void memProfiler(void)
 	stackUsageProfiler(); /* in progress function */
 #endif
 
+#ifndef LOGGING
 	generateProfileReport();
+#endif
+
+
+#ifdef LOGGING
+	uint8_t endProf[] = "Profiling analysis has completed";
+	LOG_EVENT(PROFILING_COMPLETED, PROFILING, endProf, 32, CB); /* system info */
+#endif
 	return;
 }
 
@@ -124,7 +175,6 @@ void memProfiler(void)
 void stackUsageProfiler(void) /* needs to be finished girish */
 {
 	uint32_t stackTestVal = 0x4D656D65; /* write "Meme" onto stack */
-	//uint32_t testVal = (uint32_t)(&stackTestVal); /* test val to check address of test val on stack */
 	uint32_t stackLimit = 0x20002C00;
 	uint32_t * val = (uint32_t *)stackLimit; /* top of stack */
 
@@ -163,11 +213,13 @@ void generateProfileReport(void)
 	uint8_t bytes1000Len = 15;
 	uint8_t bytes5000Len = 15;
 	uint8_t lineEndLen = 1;
+
 	uint8_t stackUseTitleLen = 22;
 	uint8_t stackUseLen = 24;
 
 	uint8_t stackUseTitle[] = "STACK USAGE PROFILING\n";
 	uint8_t stackUse[] = "Stack Usage (In Bytes): ";
+
 	uint8_t mySetDMATitle[] = "DMA Mem Set Profiling Information (In Clk Cycles)\n";
 	uint8_t myMvDMATitle[] = "DMA Mem Mv Profiling Information (In Clk Cycles)\n";
 #endif

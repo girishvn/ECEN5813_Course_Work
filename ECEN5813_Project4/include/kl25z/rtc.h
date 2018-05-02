@@ -8,7 +8,7 @@
 #ifndef SOURCE_RTC_H_
 #define SOURCE_RTC_H_
 
-extern uint32_t RTC_seconds;
+extern volatile uint32_t RTC_seconds;
 
 /**
  * @brief Initialize Real time Clock on KL25Z

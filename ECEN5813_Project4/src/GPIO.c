@@ -6,6 +6,7 @@
 */
 
 #include "GPIO.h"
+#include "logger.h"
 
 void GPIO_Configure(){
 
@@ -26,6 +27,11 @@ void GPIO_Configure(){
 	/*Data output for LED's set low*/
 	GPIOB->PDOR |= 0x03<<18;	/*Set Output of RED and Green LED Low*/
 	GPIOD->PDOR |= 0x01<<1; /*Set Output of Blue LED Low*/
+
+#ifdef LOGGING
+	uint8_t gpioInit[] = "GPIO_INIT";
+	LOG_EVENT(GPIO_INITIALZED, GPIO, gpioInit, 9, CB); /* gpio init */
+#endif
 }
 
 void Toggle_Red_LED(){

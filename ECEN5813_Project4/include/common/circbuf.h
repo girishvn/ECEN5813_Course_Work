@@ -9,6 +9,7 @@
  * @version 2.0
  *
  */
+
 #ifndef __CIRCBUF_H__
 #define __CIRCBUF_H__
 
@@ -150,3 +151,4 @@ int CB_is_empty(CB_t ** CB);
 CB_e CB_peek(CB_t ** CB, size_t offset, uint8_t * storedData);
 
 #endif //__CIRCBUF_H__
+
