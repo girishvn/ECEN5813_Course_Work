@@ -11,10 +11,13 @@
 
 #include "logger.h"
 #include "logger_queue.h"
-#include "uart.h"
 #include "conversion.h"
 #include "platform.h"
+
+#ifdef KL25ZUSE
+#include "uart.h"
 #include "rtc.h"
+#endif
 
 #ifdef BBBUSE
 #include "string.h"
@@ -305,7 +308,6 @@ uint32_t GET_RTC_TIME(void)
 #endif
 
 #if defined(BBBUSE) || defined(HOSTUSE)
-
+	return 0; /* change girish */
 #endif
 }
-

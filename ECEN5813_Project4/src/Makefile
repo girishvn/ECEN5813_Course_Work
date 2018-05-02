@@ -45,7 +45,7 @@
 include sources.mk
 
 #data processing file
-TARGET = project3
+TARGET = project4
 GENFLAGS = -Wall -Werror -g -O3 -std=c99
 
 #Various platforms to build for: KL25Z, BBB, HOST (default)
@@ -76,8 +76,6 @@ COMPILER = arm-linux-gnueabi-gcc
 INCLUDES = -I../include/CMSIS
 LDFLAGS = -static
 
-STACKUSAGE = -fstack-usage
-
 #For host platform (linux computer), default case
 else
 
@@ -93,8 +91,8 @@ endif
 #Compile Defines
 INCLUDES +=-I../include/common
 CC = $(COMPILER)
-CFLAGS = $(INCLUDES) $(GENFLAGS) $(ARCHFLAGS) $(STACKUSAGE)
-CPPFLAGS = -DPROJECT3 $(VERBOSEOUT) $(TARGETUSE) $(CMNDLNBLD) $(INCLUDES)
+CFLAGS = $(INCLUDES) $(GENFLAGS) $(ARCHFLAGS)
+CPPFLAGS = -DPROJECT4 -DLOGGING $(VERBOSEOUT) $(TARGETUSE) $(CMNDLNBLD) $(INCLUDES)
 LDFLAGS += -Wl,-Map=$(TARGET).map
 
 #Generate object variable from implementation .c and .S files

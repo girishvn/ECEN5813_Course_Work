@@ -19,12 +19,12 @@
 #include "circbuf.h"
 #include "logger.h"
 #include "logger_queue.h"
+#include "conversion.h"
 
 #ifdef KL25ZUSE
 #include "dma.h"
 #include "uart.h"
 #include "MKL25Z4.h"
-#include "conversion.h"
 #endif
 
 /*
@@ -123,30 +123,24 @@ void memProfiler(void)
 		uint8_t strLen = 0;
 
 		strLen = my_itoa(stdMemSet[i], strPtr, 10);
-		UART_send_n(strPtr,strLen);
 		LOG_EVENT(PROFILING_RESULT, PROF_STDSET, strPtr, strLen, CB); /* std set log */
 
 		strLen = my_itoa(myMemSet[i], strPtr, 10);
-		UART_send_n(strPtr,strLen);
 		LOG_EVENT(PROFILING_RESULT, PROF_MYSET, strPtr, strLen, CB); /* my set log */
 
 #ifdef KL25ZUSE
 		strLen = my_itoa(myDMAMemSet[i], strPtr, 10);
-		UART_send_n(strPtr,strLen);
 		LOG_EVENT(PROFILING_RESULT, PROF_DMASET, strPtr, strLen, CB); /* my set log */
 #endif
 
 		strLen = my_itoa(stdMemSet[i], strPtr, 10);
-		UART_send_n(strPtr,strLen);
 		LOG_EVENT(PROFILING_RESULT, PROF_STDMV, strPtr, strLen, CB); /* std set log */
 
 		strLen = my_itoa(myMemSet[i], strPtr, 10);
-		UART_send_n(strPtr,strLen);
 		LOG_EVENT(PROFILING_RESULT, PROF_MYMV, strPtr, strLen, CB); /* my set log */
 
 #ifdef KL25ZUSE
 		strLen = my_itoa(myDMAMemSet[i], strPtr, 10);
-		UART_send_n(strPtr,strLen);
 		LOG_EVENT(PROFILING_RESULT, PROF_DMAMV, strPtr, strLen, CB); /* my set log */
 #endif
 
