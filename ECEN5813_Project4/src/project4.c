@@ -21,6 +21,7 @@
 #include "stdlib.h"
 #include "profiling.h"
 #include "conversion.h"
+#include "platform.h"
 
 #ifdef KL25ZUSE
 #include "SPI.h"
@@ -102,7 +103,13 @@ void processData()
 			miscCount++;
 		}
 
+#ifdef KL25ZUSE
 		UART_send(&Data); /* print out to log */
+#endif
+
+#if defined(BBBUSE) || defined(HOSTUSE)
+		PRINTF("%c",Data);
+#endif
 	}
 	printData();
 }

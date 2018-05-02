@@ -276,7 +276,7 @@ void log_item_printf(binLog_t * logItem);
  *
  * @return void
  */
-void LOG_EVENT(binLog_e logID, uint8_t moduleID, uint8_t * payload, uint8_t payloadLen, CB_t ** LQ);
+void LOG_EVENT(binLog_e logID, fileID_e moduleID, uint8_t * payload, uint8_t payloadLen, CB_t ** LQ);
 
 /**
  * @brief logs an item onto the circular buffer

@@ -12,6 +12,7 @@
 
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wunused-but-set-variable"
+#pragma GCC diagnostic ignored "-Wunused-variable"
 #endif
 
 #include "logger.h"
@@ -24,9 +25,10 @@
 #include "rtc.h"
 #endif
 
-#ifdef BBBUSE
+#if defined(BBBUSE) || defined(HOSTUSE)
 #include "string.h"
 #include <sys/time.h>
+#include <time.h>
 #endif
 
 /* BLOCKING LOGGING FUNCTIONS */
@@ -187,7 +189,7 @@ void log_flush_printf(void)
 
 	while(LQ_buffer_remove_item(CB, &dataPtr) != CB_buff_empty_err)
 	{
-		PRINTF("%c", &data);
+		PRINTF("%c", dataPtr);
 	}
 }
 
