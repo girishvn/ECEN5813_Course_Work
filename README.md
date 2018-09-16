@@ -1,5 +1,7 @@
 Repository Name: ECEN5813_Course_Work
+
 Authors: Karros Huang & Girish Narayanswamy
+
 Date: Jan - May 2018
 
 The repository contains projects from the class ECEN 5813 Principles of Embedded Systems.
